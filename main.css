@@ -1,13 +1,14 @@
 .row.content {height: 1500px}
     
     .sidenav {
-      background-color: #f1f1f1;
+      background-color: indigo;
       height: 100%;
+      position: absolute;
     }
     
     /* Set black background color, white text and some padding */
     footer {
-      background-color: #555;
+      background-color: indigo;
       color: white;
       padding: 15px;
       text-align: center;
@@ -21,3 +22,7 @@
       }
       .row.content {height: auto;} 
     }
+
+.container-fluid{
+  background-color: darkslateblue;
+}
