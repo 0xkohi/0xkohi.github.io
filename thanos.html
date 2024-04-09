@@ -23,13 +23,13 @@
             </div>
         
             <div class="col-sm-9">
-              <h4><small>Thanos Ransomware</small></h4>
+              <h4><small><b>Thanos Ransomware</b></small></h4>
               <hr>
               <h3>Context</h3>
               <p>We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. 
                 We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled. 
               </p>
-              <br><br>
+              <br>
               <h3>Malware execution</h3>
               <p>. . . Executing the binary<br><br>
               <img src=”images/malwr1.png” height=”” width=””>
@@ -49,9 +49,9 @@
                 When looking more in detail at the encrypted files, we can see that it targets the whole C:\ local disk
                 and around 5k of our files have been encrypted (on a new VM).<br><br>
                 </p>
-              <br><br>
+              <br>
               <h3>Binary analysis</h3>
-              <br><br>
+              <br>
               <h4>Binary information</h4>
               <p>To start our analysis, we went for some reversing. First, we tried to open the initial binary with IDA
                 pro, but we realized it is a .NET framework:<br>
@@ -68,7 +68,7 @@
                 executed itself properly in our environment.<br><br>
                 Let’s start to follow the main program<br><br>
                 </p>
-              <br><br>
+              <br>
               <h4>Stage 1: Defense mechanisms</h4>
               <p>We see in the first place that the ransomware uses a function called “HookApplication” with processes
                 as parameters to write malicious code in the memory of the targeted processes.<br><br>
@@ -115,7 +115,7 @@
                 the process running.<br><br>
                 Thereafter, following the main function, the following processes are executed:<br><br>
                 Net.exe, sc.exe, taskkill.exe, vssadmin.exe, del.exe</p>
-              <br><br>
+              <br>
               <h4>Stage 2: Encryption</h4>
               <p>As a first step, a random string of a defined length is declared as a dynamic pass, this string is then
                 encrypted with a function called Encrypt ():<br><br>
@@ -128,7 +128,7 @@
                 In each folder path that has been encrypted by the function, a text file with the instructions to decrypt
                 the data is created.<br><br>
                 This text file is created on the desktop at the same time.</p>
-              <br><br>
+              <br>
               <h4>Stage 3: Data exfiltration</h4>
               <p>The ransomware then extracts some data via FTP with the following code:<br><br>
                 It creates a new Web Client instance with the victim’s IP address recovered from a website:<br><br>
@@ -142,7 +142,7 @@
                 - The client IP address<br><br>
                 In the sample we analyzed, it does not look like the encrypted files are being transferred to another
                 domain/website. Only some information about the victim is extracted.</p>
-              <br><br>
+              <br>
               <h4>Stage 4: Covering traces</h4>
               <p>During the analysis we realized that the binary was not on the system anymore, after looking at its
                 executed commands we found this one:<br><br>
@@ -165,7 +165,7 @@
                 window to close automatically.<br><br>
                 Choice /C Y /N /D Y /T : displays an empty, flashing prompt. However, the /T 3 means that the prompt
                 will automatically select the default choice Y (/D Y) after 3 seconds</p>
-              <br><br>
+              <br>
               <h4>Other interesting functions</h4>
               <p>Since the ransomware includes lots of functions that were not used, I still wanted to look at some of
                 them and understand what it can really do if they are activated.<br><br>
@@ -203,7 +203,7 @@
                 -s: target
                 -n 2: number of repetitions
                 -c: specify a path or a command to execute</p>
-              <br><br>
+              <br>
               <h3>VISUAL-Procmon analysis</h3>
               <p>Now that we have explored the binary, it is time to look at how our VM environment is impacted and
                 compare what we see with our previous analysis.<br><br>
@@ -228,7 +228,7 @@
                 There were no more interesting things to see here with VISUAL-procmon that we did not figure out
                 yet, but in the need to a report, this tool is great to make graph and quickly understand what happen
                 and how each process is executed and the parameters.</p>
-              <br><br>
+              <br>
               <h3>Conclusion</h3>
               <p>As a first malware analysis, Thanos ransomware is interesting, I would say the obfuscation was not
                 really an issue, but it was still challenging to follow the main program and understand each function.<br><br>
