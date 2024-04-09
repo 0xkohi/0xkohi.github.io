@@ -1,28 +1,30 @@
-.row.content {height: 1500px}
+.row.content {height: 900px}
     
     .sidenav {
-      background-color: white;
+      background-color: rgb(51, 50, 50);
       height: 100%;
-      position: absolute;
+      color: rgb(207, 207, 207);
+      font-weight: bold;
     }
-    
+    .col-sm-9{
+      background-color: rgb(75, 72, 72);
+      color: rgb(207, 207, 207);
+      font-weight: bold;
+    }
     /* Set black background color, white text and some padding */
     footer {
-      background-color: grey;
-      color: white;
+      background-color: rgb(51, 50, 50);
+      color: rgb(207, 207, 207);
       padding: 15px;
       text-align: center;
     }
     
     /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 2px) {
       .sidenav {
-        height: auto;
+        height: 100%;
         padding: 15px;
       }
-      .row.content {height: auto;} 
+      .row.content {height: auto;
+      } 
     }
-
-.container-fluid{
-  background-color: white;
-}
