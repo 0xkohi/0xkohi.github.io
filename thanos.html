@@ -32,17 +32,20 @@
               <br><br>
               <h3>Malware execution</h3>
               <p>. . . Executing the binary<br><br>
+              <img src=”images/malwr1.png” height=”” width=””>
                 First thing appearing is this big info box/pop up giving us the instruction to follow to decrypt our files<br><br>
                 I noticed that all our files were not instantly encrypted, it took some time for the entire system.<br><br>
                 By trying to restart the VM (not recommended to do in a real case scenario), this window information
-                screen before the password part appears.<br><br>
+                screen before the password part appears.<br>
+                <img src=”images/malwr4.png” height=”” width=””>
                 This is interesting because for a file to be displayed here it could mean that the malware infected the
                 BIOS, something to look at!<br><br>
                 It did not block us from accessing the VM. Also, there were a lot of “HOW_TO_DECYPHER_FILES.txt”
                 files, in each directory that has been infected.<br><br>
                 The extension of the encrypted files is ‘. crypted’.<br><br>
                 The only start-up application that we can see in the task manager opens the same file
-                “HOW_TO_DECYPHER_FILES.txt”.<br><br>
+                “HOW_TO_DECYPHER_FILES.txt”.<br>
+                <img src=”images/malwr10.png” height=”” width=””>
                 When looking more in detail at the encrypted files, we can see that it targets the whole C:\ local disk
                 and around 5k of our files have been encrypted (on a new VM).<br><br>
                 </p>
@@ -51,13 +54,16 @@
               <br><br>
               <h4>Binary information</h4>
               <p>To start our analysis, we went for some reversing. First, we tried to open the initial binary with IDA
-                pro, but we realized it is a .NET framework:<br><br>
+                pro, but we realized it is a .NET framework:<br>
+                <img src=”images/malwr2.png” height=”” width=””>
                 Instead, we went for dnSpy which is a reversing tool made for .NET so more adapted to our case.<br><br>
                 After opening it, we can already see some interesting class names. We will investigate some of them
-                and follow the main class to understand when and why each of this class are called:<br><br>
+                and follow the main class to understand when and why each of this class are called:<br>
+                <img src=”images/malwr3.png” height=”” width=””>
                 We found out that the main class is called ”Program”. In this same class we can find the configuration
                 file “.cctor” which is different for each sample and contains the options selected or not for the
-                ransomware.<br><br>
+                ransomware.<br>
+                <img src=”images/malwr6.png” height=”” width=””>
                 We see in this file that the “AntiVM” option is not activated so it explains why the ransomware
                 executed itself properly in our environment.<br><br>
                 Let’s start to follow the main program<br><br>
@@ -66,7 +72,8 @@
               <h4>Stage 1: Defense mechanisms</h4>
               <p>We see in the first place that the ransomware uses a function called “HookApplication” with processes
                 as parameters to write malicious code in the memory of the targeted processes.<br><br>
-                The processes name is written in base64:<br><br>
+                The processes name is written in base64:<br>
+                <img src=”images/malwr7.png” height=”” width=””>
                 Right after, a PowerShell Cmdlet is executed, which deactivates the access control to the Windows
                 Defender folder. This can be a way for the malware to bypass this antivirus and allow malicious
                 processes to run.<br><br>
