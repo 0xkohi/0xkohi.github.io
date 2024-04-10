@@ -1,0 +1,80 @@
+baseurl      = "malwr101.github.com"
+title        = "Blog | malwr101"
+languageCode = "en-us"
+theme        = "hello-friend-ng"
+paginate     = 10
+
+[params]
+  dateform        = "Jan 2, 2006"
+  dateformShort   = "Jan 2"
+  dateformNum     = "2006-01-02"
+  dateformNumTime = "2006-01-02 15:04"
+
+  # Subtitle for home
+  homeSubtitle = "Socials"
+
+  # Set disableReadOtherPosts to true in order to hide the links to other posts.
+  disableReadOtherPosts = false
+
+  # Enable sharing buttons, if you like
+  enableSharingButtons = true
+  
+  # Show a global language switcher in the navigation bar
+  enableGlobalLanguageMenu = false
+
+  # Metadata mostly used in document's head
+  description = "My new homepage"
+  keywords = "homepage, blog"
+  images = [""]
+
+  [params.footer]
+    trademark = 2024
+    rss = true
+    copyright = false
+    author = false
+
+    topText = []
+    bottomText = []
+
+[taxonomies]
+    category = "blog"
+    tag      = "tags"
+    series   = "series"
+
+[languages]
+  [languages.en]
+    title = "Blog | malwr101"
+    keywords = ""
+    copyright = '<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener"></a>'
+    readOtherPosts = "Read other posts"
+
+  [languages.en.params]
+    subtitle  = "test"
+
+    [languages.en.params.logo]
+      logoText = "welcome"
+      logoHomeLink = "/"
+    # or
+    #
+    # path = "/img/your-example-logo.svg"
+    # alt = "Your example logo alt text"
+
+  # Socials media
+  [[params.social]]
+  name = "twitter"
+  url = "https://twitter.com/malwr101"
+  [[params.social]]
+  name = "github"
+  url = "https://github.com/malwr101"
+
+  # And you can even create generic menu
+
+  [[menu.main]]
+    identifier = "about"
+    name       = "About"
+    url        = "about/"
+
+  [[menu.main]]
+    identifier = "blog"
+    name       = "Posts"
+    url        = "posts/"

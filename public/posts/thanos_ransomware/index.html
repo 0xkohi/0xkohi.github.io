@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="map[name:malwr101]">
+<meta name="description" content="Context We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled." />
+<meta name="keywords" content="homepage, blog" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="//localhost:1313/posts/thanos_ransomware/" />
+
+
+    <title>
+        
+            Thanos ransomware analysis :: Blog | malwr101  — test
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.949191c1dcc9c4a887997048b240354e47152016d821198f89448496ba42e491.css" integrity="sha256-lJGRwdzJxKiHmXBIskA1TkcVIBbYIRmPiUSElrpC5JE=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Thanos ransomware analysis">
+<meta itemprop="description" content="Context We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled."><meta itemprop="datePublished" content="2024-04-08T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2024-04-08T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2336"><meta itemprop="image" content="//localhost:1313/" />
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="//localhost:1313/" /><meta name="twitter:title" content="Thanos ransomware analysis"/>
+<meta name="twitter:description" content="Context We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled."/>
+
+
+
+    <meta property="og:title" content="Thanos ransomware analysis" />
+<meta property="og:description" content="Context We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/posts/thanos_ransomware/" /><meta property="og:image" content="//localhost:1313/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-04-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-04-08T00:00:00+00:00" />
+
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2024-04-08 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                welcome</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/posts/">Posts</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        11 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="//localhost:1313/posts/thanos_ransomware/">Thanos ransomware analysis</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <h2 id="context">Context</h2>
+<p>We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works.
+We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled.</p>
+<h2 id="malware-execution">Malware execution</h2>
+<p>. . . Executing the binary
+<img alt="coucou" src="/images/malwr1.png"></p>
+<p>First thing appearing is this big info box/pop up giving us the instruction to follow to decrypt our files.</p>
+<p>I noticed that all our files were not instantly encrypted, it took some time for the entire system.
+By trying to restart the VM (not recommended to do in a real case scenario), this window information
+screen before the password part appears.
+<img alt="coucou" src="/images/malwr4.png"></p>
+<p>When looking more in detail at the encrypted files, we can see that it targets the whole C:\ local disk
+and around 5k of our files have been encrypted (on a new VM).</p>
+<h2 id="binary-analysis">Binary analysis</h2>
+<h3 id="information">Information</h3>
+<p>To start our analysis, we went for some reversing. First, we tried to open the initial binary with IDA
+pro, but we realized it is a .NET framework:
+<img alt="coucou" src="/images/malwr2.png"></p>
+<p>Instead, we went for dnSpy which is a reversing tool made for .NET so more adapted to our case.
+After opening it, we can already see some interesting class names. We will investigate some of them
+and follow the main class to understand when and why each of this class are called:
+<img alt="coucou" src="/images/malwr3.png"></p>
+<p>We found out that the main class is called ”Program”. In this same class we can find the configuration
+file “.cctor” which is different for each sample and contains the options selected or not for the
+ransomware.
+<img alt="coucou" src="/images/malwr6.png"></p>
+<p>We see in this file that the “AntiVM” option is not activated so it explains why the ransomware
+executed itself properly in our environment.
+Let’s start to follow the main program</p>
+<h3 id="stage-1-defense-mechanisms">Stage 1: Defense mechanisms</h3>
+<p>We see in the first place that the ransomware uses a function called “HookApplication” with processes
+as parameters to write malicious code in the memory of the targeted processes.
+The processes name is written in base64:
+<img alt="coucou" src="/images/malwr7.png"></p>
+<p>Right after, a PowerShell Cmdlet is executed, which deactivates the access control to the Windows
+Defender folder. This can be a way for the malware to bypass this antivirus and allow malicious
+processes to run.
+<img alt="coucou" src="/images/malwr9.png"></p>
+<p><img alt="coucou" src="/images/malwr12.png"></p>
+<p>Then, we see a couple of defensive classes that are called, let’s try to understand how they work.</p>
+<p>• AntiKill</p>
+<p>In this class, there is a function called “IamInmortal” in which the process handle of the current
+process running is taken. Then the second method retrieves the security descriptor associated
+with the process. On the third line, the DACL is used to specify the access control entries. InsertAce
+allows you to insert this entry at the specified index of the DACL. CommonAce is the value of the
+common access control entry applied and the parameters are set to deny the process of being
+killed.</p>
+<p>And at the end, the last method is used to set the security descriptor for the specified process
+handle.</p>
+<p>So, in short, this function modifies the security descriptor of the current process to grant specific
+access rights to a user or group, to prevent the process from being killed or terminated.
+<img alt="coucou" src="/images/malwr14.png"></p>
+<p>Now by looking at the main function of the binary, we see that the function is called only once and this
+way:
+<img alt="coucou" src="/images/malwr15.png"></p>
+<p>If the process is admin (role 544), then the two AntiKill functions will be executed:
+<img alt="coucou" src="/images/malwr16.png"></p>
+<p>The first prevent from launching the task manager and the second one from killing it as we just saw.</p>
+<p>• Anti_Analysis</p>
+<p>It can also detect its environment with the anti_analysis class and more precisely with the
+RunAntiAnalysis function that calls some other functions to detect the manufacturer, the debugger
+the size of the disk, … to determine if the binary is executed in a VM:
+<img alt="coucou" src="/images/malwr17.png"></p>
+<p>We notice that a function called “CleanMyStuff” is being used 3 times in the main program, by looking
+at it (as its name says it), the ransomware uses this function to clear its traces.
+<img alt="coucou" src="/images/malwr18.png"></p>
+<p>First, it calls the function “ProcessCommand” to execute the following command line in with the cmd
+process:
+<img alt="coucou" src="/images/malwr19.png"></p>
+<p>It starts with 3 ICMP packets echo request to 127.0.0.7 (could be used to add a delay), and then the
+command uses the fsutil utility to set a file data area to zero. It defines a file data area from offset 0
+with a length of 524288 bytes (or 512 KB). Regarding the hex characters, we can see on cyberchef.io
+that they represent “” :
+<img alt="coucou" src="/images/malwr20.png"></p>
+<p>And inside of it we find the variable “$s”, which could most likely be a path to a file. The command
+ends by deleting what contains this same variable.</p>
+<p>About the second string encoded in base64:
+<img alt="coucou" src="/images/malwr21.png"></p>
+<p>This is also a PowerShell command; it will open a pop-up window for 3 seconds asking for user choices
+(Y or N) to delete something that is not defined, it would most likely be a file path.</p>
+<p>Here is how the CleanMyStuff() function is called inside the main function:
+<img alt="coucou" src="/images/malwr22.png"></p>
+<p>We see that in addition there is a command line: Process.GetCurrentProcess().Kill(), that basically kills
+the process running.</p>
+<p>Thereafter, following the main function, the following processes are executed:
+Net.exe, sc.exe, taskkill.exe, vssadmin.exe, del.exe</p>
+<h3 id="stage-2-encryption">Stage 2: Encryption</h3>
+<p>As a first step, a random string of a defined length is declared as a dynamic pass, this string is then
+encrypted with a function called Encrypt ():
+<img alt="coucou" src="/images/malwr23.png"></p>
+<p>This function encrypts a string by using a public key and the size of the key recovered with keySize and
+publicKeyXml. Then it returns the result of the encryptoin converted in base64.</p>
+<p>We have a list of files extensions that are targeted and encrypted with the” Crypt” function. After
+doing some verification on conditions, this same function uses another function called
+”WorkerCrypter” who is responsible for encrypting all the files with the extensions listed, with some
+parameters:
+<img alt="coucou" src="/images/malwr24.png"></p>
+<p>In each folder path that has been encrypted by the function, a text file with the instructions to decrypt
+the data is created.
+<img alt="coucou" src="/images/malwr25.png"></p>
+<p><img alt="coucou" src="/images/malwr26.png"></p>
+<p>This text file is created on the desktop at the same time.</p>
+<h3 id="stage-3-data-exfiltration">Stage 3: Data exfiltration</h3>
+<p>The ransomware then extracts some data via FTP with the following code:
+<img alt="coucou" src="/images/malwr27.png"></p>
+<p>It creates a new Web Client instance with the victim’s IP address recovered from a website:
+<img alt="coucou" src="/images/malwr28.png"></p>
+<p>By looking at the website on VirusTotal, we see that it is hosting some malicious files.
+<a href="https://www.virustotal.com/graph/embed/ge9bc64b0337e4c1da10c9de8124dc89c3283505d8a7e454cb780320244e88205">https://www.virustotal.com/graph/embed/ge9bc64b0337e4c1da10c9de8124dc89c3283505d8a7e454cb780320244e88205</a></p>
+<p>The data extracted include:</p>
+<ul>
+<li>The client unique identifier key</li>
+<li>The date of encryption</li>
+<li>The number of files that were processed.</li>
+<li>The client IP address</li>
+</ul>
+<p>In the sample we analyzed, it does not look like the encrypted files are being transferred to another
+domain/website. Only some information about the victim is extracted.</p>
+<h3 id="stage-4-covering-traces">Stage 4: Covering traces</h3>
+<p>During the analysis we realized that the binary was not on the system anymore, after looking at its
+executed commands we found this one:
+<img alt="coucou" src="/images/malwr39.png"></p>
+<p>Here the binary executes the command: cmd.exe /C choice /C Y /N /D Y /T 3 &amp; Del. As we described
+before in the analysis, the process deletes itself after answering the prompt automatically.
+We can also see that this command is in the function “CleanMyStuff” used to cover its traces:
+<img alt="coucou" src="/images/malwr18.png"></p>
+<p><img alt="coucou" src="/images/malwr19.png"></p>
+<p><img alt="coucou" src="/images/malwr21.png"></p>
+<p>Detailed command:</p>
+<ul>
+<li>
+<p>ping 127.0.0.7 -n 3 &gt; Nul: This command uses the ping utility to send three packets to the local IP
+address 127.0.0.7. The -n 3 option specifies sending three packets. &gt; Null redirects the output
+(normally displayed in the console) to Null, which means that the output of the ping command will not
+be displayed.</p>
+</li>
+<li>
+<p>fsutil file setZeroData offset=0 length=524288 &ldquo;%s&rdquo;: This command uses the fsutil utility to set data
+to zero in a file specified by &ldquo;%s&rdquo;. This means that the first 524,288 bytes (or 512 KB) of the file will be
+filled with zeros. %s is a variable substitution which will be replaced by the file path.</p>
+</li>
+<li>
+<p>Del /f /q &ldquo;%s&rdquo;: This command deletes the file specified by &ldquo;%s&rdquo;. The /f and /q options tell the Del
+command to delete the file without asking the user for confirmation.</p>
+</li>
+</ul>
+<p>So, this sequence of commands sends three ping packets to the local IP address, then fills the first 512
+KB of a specified file with zeros, and finally deletes that file.</p>
+<ul>
+<li>
+<p>Cmd /C: causes a command window to appear and run the command specified. It then causes the
+window to close automatically.</p>
+</li>
+<li>
+<p>Choice /C Y /N /D Y /T : displays an empty, flashing prompt. However, the /T 3 means that the prompt
+will automatically select the default choice Y (/D Y) after 3 seconds</p>
+</li>
+</ul>
+<h3 id="other-interesting-functions">Other interesting functions</h3>
+<p>Since the ransomware includes lots of functions that were not used, I still wanted to look at some of
+them and understand what it can really do if they are activated.</p>
+<p>There is a class called “rootkit” and by looking at it we understand that it downloads a file from the
+following URL:
+<img alt="coucou" src="/images/malwr29.png"></p>
+<p><img alt="coucou" src="/images/malwr30.png"></p>
+<p>This URL downloads the raw code of another binary named ProcessHide64, available on GitHub. From
+the README file of the repository, this program permits to “Hide any process from any monitoring tool
+that uses NTQuerySystemInformation”. We can see that the developers of the malware made efforts
+to hide their traces and are trying to slow the analysis process.</p>
+<p>In the same block of code, the malware clears the recycle bin with the following cmd command:
+<img alt="coucou" src="/images/malwr31.png"></p>
+<p>Now let’s look at the network related functions, the program only uses one network function:
+<img alt="coucou" src="/images/malwr32.png"></p>
+<p>This function is used at the beginning of the program which makes sense because the discovery is
+important for the next steps, if we take a closer look at the run function of the class network Spreading:</p>
+<ul>
+<li>NetworkSpreading</li>
+</ul>
+<p>The malware here does some network spreading when we look at the functions within it:
+<img alt="coucou" src="/images/malwr33.png"></p>
+<p>We see that it downloads a tool:
+<img alt="coucou" src="/images/malwr34.png"></p>
+<p>The URI was encoded in base64 so here it is in clear:
+<img alt="coucou" src="/images/malwr35.png"></p>
+<p>This binary does not seem to be downloadable from this URI anymore, but on the website, we can see
+that PowerAdmin is a software used for Server Monitoring.</p>
+<p>In the same function, the ransomware takes the network information of the local machine as followed:
+<img alt="coucou" src="/images/malwr36.png"></p>
+<p>So, it retrieves the IP address and the DNS entries.</p>
+<p>Something else interesting is in the run function:
+<img alt="coucou" src="/images/malwr37.png"></p>
+<p>wmic.exe can be used to add exclusion and authorize malicious programs. Net.exe can be used to
+retrieve information about the network or even create connections.
+In this case, the malware is trying to connect to other machines of the same local network and if there
+is a successful connection (with the password specified) then the malware will copy itself to the
+connected machine and execute the file. As the name of the class says, it is network spreading.</p>
+<p><img alt="coucou" src="/images/malwr38.png"></p>
+<p>Regarding the last if () condition above, it tries different methods to connect to the machine, first it
+checks if there are credentials activated. If it is the case, then try the username “efadmin” in the group
+EDENFIELD with the password “P455w0rd”. But if there are no credentials, it will only use the other
+options, which are used as follow:</p>
+<p>-d: delete
+-f: force
+-h: help
+-s: target
+-n 2: number of repetitions
+-c: specify a path or a command to execute</p>
+<h2 id="visual-procmon-analysis">VISUAL-Procmon analysis</h2>
+<p>Now that we have explored the binary, it is time to look at how our VM environment is impacted and
+compare what we see with our previous analysis.<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p>In the first place, I will download the logs that procmon displays us in a CSV format to send them to
+another tool called VISION-Procmon which offers a better view and filters to focus on a specific process
+which is helpful for malware analysis use cases.</p>
+<p>In the process list we see mshta.exe, I decided to start with this one because I saw there were .hta files
+in our system that appeared with the ransomware. By selecting it with VISION-procmon, and choosing
+the filter “File operations” here is the graph that we obtain:
+<img alt="coucou" src="/images/malwr5.png"></p>
+<p>For more information on the process itself, mshta.exe is used to execute .hta files (HTML document)
+on the web. It can be used to execute malicious scripts or install malicious software, as it can bypass
+local Internet security settings because they are considered as trusted applications.</p>
+<p>So, the long name on the right is the ransomware binary, we see with the first link that it is the parent
+process of mshta.exe. Then, in the bottom right box, we can see the command that has been executed
+and we see that the file “HOW_TO_DECYPHER_FILES.hta” has been executed.</p>
+<p>We still have the .hta file on the desktop, and by executing it, we see that this corresponds to the first
+big red box that we saw when executing the ransomware.</p>
+<p>For the next process, we select cmd.exe and we stay with the “File operations” filter. As we saw during
+the binary analysis in the covering track&rsquo;s part, the command line is executed but we had an unknown
+path. Well here the file that is being deleted is the malware itself, so we understand that the function
+CleanMyStuff has been used here.
+<img alt="coucou" src="/images/malwr8.png"></p>
+<p>There were no more interesting things to see here with VISUAL-procmon that we did not figure out
+yet, but in the need to a report, this tool is great to make graph and quickly understand what happen
+and how each process is executed and the parameters.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>As a first malware analysis, Thanos ransomware is interesting, I would say the obfuscation was not
+really an issue, but it was still challenging to follow the main program and understand each function.</p>
+<p>Since all the classes and options of configuration were not used in this sample, I mostly focused on the
+ones called in the main program. Which means that I might have missed some information or not
+detailed enough in some classes that were outside of the box.</p>
+<p>I have not focused on the decryption possibilities, but it is something that could be interesting to
+do in the future</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        2336 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2024-04-08 02:00
+        
+
+         
+          
+        
+      </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Thanos%20ransomware%20analysis&amp;caption=Thanos%20ransomware%20analysis&amp;canonicalUrl=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Thanos%20ransomware%20analysis&amp;body=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f&amp;media=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f;description=Thanos%20ransomware%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f&amp;title=Thanos%20ransomware%20analysis&amp;summary=Thanos%20ransomware%20analysis&amp;source=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f&amp;resubmit=true&amp;title=Thanos%20ransomware%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f;title=Thanos%20ransomware%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Thanos%20ransomware%20analysis%20%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f&amp;t=Thanos%20ransomware%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Thanos%20ransomware%20analysis&amp;url=%2f%2flocalhost%3a1313%2fposts%2fthanos_ransomware%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2024</span>
+            
+            
+            <span><a href="//localhost:1313/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            
+        </div>
+    </div>
+    
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
+
+
+
+
+    </body>
+</html>
