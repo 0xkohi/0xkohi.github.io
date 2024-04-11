@@ -5,16 +5,22 @@
     <link>//localhost:1313/</link>
     <description>Recent content on Blog | malwr101</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;/a&gt;</copyright>
+    <language>en-us</language>
     <lastBuildDate>Mon, 08 Apr 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Thanos ransomware analysis</title>
+      <title></title>
       <link>//localhost:1313/posts/thanos_ransomware/</link>
       <pubDate>Mon, 08 Apr 2024 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/posts/thanos_ransomware/</guid>
-      <description>Context We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled.</description>
+      <description>Context I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. I decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled.</description>
+    </item>
+    <item>
+      <title></title>
+      <link>//localhost:1313/about/</link>
+      <pubDate>Mon, 08 Apr 2024 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/about/</guid>
+      <description>I am a cybersecurity student interested in Malware analysis and Forensics.&#xA;On this blog you will find posts about malware analysis and maybe some CTF writeups related to them.&#xA;On my github you will find some helpful tools for forensic disk&amp;amp;memory analysis.</description>
     </item>
   </channel>
 </rss>

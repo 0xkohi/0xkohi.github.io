@@ -6,7 +6,7 @@ linktitle: Thanos ransomware analysis
 type:
 - post
 - posts
-title: Thanos ransomware analysis
+title: 
 weight: 10
 series:
 - Malware analysis
@@ -15,15 +15,15 @@ series:
 
 ## Context
 
-We executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. 
-We decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled. 
+I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. 
+I decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled. 
 
 ## Malware execution
 
 . . . Executing the binary
 ![coucou](/images/malwr1.png)
 
-First thing appearing is this big info box/pop up giving us the instruction to follow to decrypt our files.
+First thing appearing is this big info box/pop up giving the instruction to follow to decrypt our files.
 
 I noticed that all our files were not instantly encrypted, it took some time for the entire system.
 By trying to restart the VM (not recommended to do in a real case scenario), this window information
@@ -35,27 +35,27 @@ and around 5k of our files have been encrypted (on a new VM).
 ## Binary analysis
 ### Information
 
-To start our analysis, we went for some reversing. First, we tried to open the initial binary with IDA
+To start our analysis, I went for some reversing. First, I tried to open the initial binary with IDA
 pro, but we realized it is a .NET framework:
 ![coucou](/images/malwr2.png)
 
-Instead, we went for dnSpy which is a reversing tool made for .NET so more adapted to our case.
-After opening it, we can already see some interesting class names. We will investigate some of them
+Instead, I went for dnSpy which is a reversing tool made for .NET so more adapted to our case.
+After opening it, we can already see some interesting class names. I will investigate some of them
 and follow the main class to understand when and why each of this class are called:
 ![coucou](/images/malwr3.png)
 
-We found out that the main class is called ”Program”. In this same class we can find the configuration
+I found out that the main class is called ”Program”. In this same class we can find the configuration
 file “.cctor” which is different for each sample and contains the options selected or not for the
 ransomware.
 ![coucou](/images/malwr6.png)
 
-We see in this file that the “AntiVM” option is not activated so it explains why the ransomware
+In this file the “AntiVM” option is not activated so it explains why the ransomware
 executed itself properly in our environment.
 Let’s start to follow the main program
 
 ### Stage 1: Defense mechanisms
 
-We see in the first place that the ransomware uses a function called “HookApplication” with processes
+In a first place the ransomware calls a function called “HookApplication” with processes
 as parameters to write malicious code in the memory of the targeted processes.
 The processes name is written in base64:
 ![coucou](/images/malwr7.png)
@@ -174,16 +174,18 @@ The data extracted include:
  - The number of files that were processed.
  - The client IP address
 
-In the sample we analyzed, it does not look like the encrypted files are being transferred to another
+In the sample I analyzed, it does not look like the encrypted files are being transferred to another
 domain/website. Only some information about the victim is extracted.
 
 ### Stage 4: Covering traces
 
-During the analysis we realized that the binary was not on the system anymore, after looking at its
+During the analysis I realized that the binary was not on the system anymore, after looking at its
 executed commands we found this one:
-![coucou](/images/malwr39.png)
+```
+C:\Windows\System32\cmd.exe /C choice /CY/N/DY/T 3 & Del C:\Users\vboxuser\Desktop\58bfb9fa8889550d13f42473956dc2a7ec4f3abb18fd3faeaa38089d513c171f.exe
+```
 
-Here the binary executes the command: cmd.exe /C choice /C Y /N /D Y /T 3 & Del. As we described
+Here the binary executes the command: cmd.exe /C choice /C Y /N /D Y /T 3 & Del. As I described
 before in the analysis, the process deletes itself after answering the prompt automatically.
 We can also see that this command is in the function “CleanMyStuff” used to cover its traces:
 ![coucou](/images/malwr18.png)
@@ -284,7 +286,7 @@ options, which are used as follow:
 ## VISUAL-Procmon analysis
 
 Now that we have explored the binary, it is time to look at how our VM environment is impacted and
-compare what we see with our previous analysis.<br><br>
+compare what we see with our previous analysis.
 
 In the first place, I will download the logs that procmon displays us in a CSV format to send them to
 another tool called VISION-Procmon which offers a better view and filters to focus on a specific process
@@ -313,8 +315,8 @@ CleanMyStuff has been used here.
 ![coucou](/images/malwr8.png)
 
 There were no more interesting things to see here with VISUAL-procmon that we did not figure out
-yet, but in the need to a report, this tool is great to make graph and quickly understand what happen
-and how each process is executed and the parameters.
+before in the analysis, but in the need to a report, or in live forensic case scenario, this tool is great to make graph and quickly understand what happens
+and how each process is executed.
 
 ## Conclusion
 
