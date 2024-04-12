@@ -6,7 +6,7 @@ linktitle: Thanos ransomware analysis
 type:
 - post
 - posts
-title: 
+title: Thanos ransomware analysis
 weight: 10
 series:
 - Malware analysis
