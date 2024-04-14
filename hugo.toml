@@ -42,12 +42,12 @@ paginate     = 10
     series   = "series"
 
   # Socials media
-  [[params.social]]
-  name = "twitter"
-  url = "https://twitter.com/malwr101"
-  [[params.social]]
-  name = "github"
-  url = "https://github.com/malwr101"
+  # [[params.social]]
+  #name = "twitter"
+  #url = "https://twitter.com/malwr101"
+  #[[params.social]]
+  #name = "github"
+  #url = "https://github.com/malwr101"
 
   # And you can even create generic menu
 
