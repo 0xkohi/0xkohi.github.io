@@ -15,7 +15,7 @@ series:
 
 ## Context
 
-I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. 
+I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware are working. 
 I decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled. 
 
 ## Malware execution
@@ -317,6 +317,47 @@ CleanMyStuff has been used here.
 There were no more interesting things to see here with VISUAL-procmon that we did not figure out
 before in the analysis, but in the need to a report, or in live forensic case scenario, this tool is great to make graph and quickly understand what happens
 and how each process is executed.
+
+## Yara rule to detect Thanos
+
+You can use the following Yara rule made by the McAfee Team to detect thanos ransomware(I might do my own in the future)
+
+```python
+import "pe"
+
+rule ransomware_thanos {
+   meta:
+      description = "Thanos ransomware"
+      author = "McAfee ATR Team"
+      version = "v2"
+      hash1 = "58bfb9fa8889550d13f42473956dc2a7ec4f3abb18fd3faeaa38089d513c171f"
+      hash2 = "c460fc0d4fdaf5c68623e18de106f1c3601d7bd6ba80ddad86c10fd6ea123850"
+      hash3 = "5d40615701c48a122e44f831e7c8643d07765629a83b15d090587f469c77693d"
+      hash4 = "ae66e009e16f0fad3b70ad20801f48f2edb904fa5341a89e126a26fd3fc80f75"
+
+   strings:
+      $x1 = " process call create cmd.exe /c \\\\" fullword wide
+      $s2 = "/c rd /s /q %SYSTEMDRIVE%\\$Recycle.bin" fullword wide
+      $s3 = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2QzNWhhL1Byb2Nlc3NIaWRlL21hc3Rlci9iaW5zL1Byb2Nlc3NIaWRlMzIuZXhl"
+      $s4 = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2QzNWhhL1Byb2Nlc3NIaWRlL21hc3Rlci9iaW5zL1Byb2Nlc3NIaWRlNjQuZXhl" fullword wide
+      $s5 = "config.sys" fullword wide
+      $s6 = "VGhpcyBwcm9ncmFtIHJlcXVpcmVzIE1pY3Jvc29mdCAuTkVUIEZyYW1ld29yayB2LiA0LjgyIG9yIHN1cGVyaW9yIHRvIHJ1biBwcm9wZXJseQ==" fullword wide
+      $s7 = "cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1kOiAvb249ZDogL21heHNpemU9dW5ib3VuZGVk" fullword wide
+      $s8 = "U2V0LU1wUHJlZmVyZW5jZSAtRW5hYmxlQ29udHJvbGxlZEZvbGRlckFjY2VzcyBEaXNhYmxlZA==" fullword wide
+      $s9 = "cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1mOiAvb249ZjogL21heHNpemU9dW5ib3VuZGVk" fullword wide
+      $s10 = "cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1jOiAvb249YzogL21heHNpemU9dW5ib3VuZGVk" fullword wide
+      $s11 = "cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1lOiAvb249ZTogL21heHNpemU9dW5ib3VuZGVk" fullword wide
+      $s12 = "GetCurrentProcessId" fullword wide
+      $s13 = "cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1kOiAvb249ZDogL21heHNpemU9NDAxTUI=" fullword wide
+      $s14 = "cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1jOiAvb249YzogL21heHNpemU9NDAxTUI=" fullword wide
+      $s15 = "cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1lOiAvb249ZTogL21heHNpemU9NDAxTUI=" fullword wide
+      $s16 = "PHAgc3R5bGU9InRleHQtYWxpZ246IGNlbnRlcjsiPktleSBJZGVudGlmaWVyOiA=" fullword wide
+
+   condition:
+      ( uint16(0) == 0x5a4d and filesize < 300KB and ( 1 of ($x*) and 4 of them )
+      ) or ( all of them )
+}
+```
 
 ## Conclusion
 
