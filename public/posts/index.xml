@@ -5,18 +5,67 @@
         <description>Recent content in Posts on Blog | malwr101</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Mon, 08 Apr 2024 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Fri, 09 Aug 2024 00:00:00 +0000</lastBuildDate>
         <atom:link href="//localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
         
         <item>
-            <title></title>
+            <title>CTI Discord bot</title>
+            <link>//localhost:1313/posts/discord_bot/</link>
+            <pubDate>Fri, 09 Aug 2024 00:00:00 +0000</pubDate>
+            
+            <guid>//localhost:1313/posts/discord_bot/</guid>
+            <description>Context I decided to create a Discord bot that could be useful, for me and maybe for some people. The bot has many use cases, on my side I will use it in malware analysis and has a threat intelligence news. Since I am often using discord, using this bot is also a faster way to get the information I need.
+Bot Features The bot currently has 4 features, more might be added in the future if I get other ideas.</description>
+            <content type="html"><![CDATA[<h2 id="context">Context</h2>
+<p>I decided to create a Discord bot that could be useful, for me and maybe for some people. The bot has many use cases, on my side I will use it in malware analysis and has
+a threat intelligence news.
+Since I am often using discord, using this bot is also a faster way to get the information I need.</p>
+<h2 id="bot-features">Bot Features</h2>
+<p>The bot currently has 4 features, more might be added in the future if I get other ideas.
+There are three commands available and an automatic news channel.</p>
+<p>The commands of this bot are executable with the &ldquo;/&rdquo; prefix as follow
+<img src="/images/bot1.png" alt="image"></p>
+<h3 id="group-lookup">Group lookup</h3>
+<p>Starting with the group lookup feature, this command allows you to enter an attacker group as parameter:
+<img src="/images/bot2.png" alt="image"></p>
+<p>The group entered by the user will ask the json base of ransomwatch telemetry and send the output regarding if it exists or not.
+The output contains the name, fqdn, the last time it has been updated:
+<img src="/images/bot3.png" alt="image"></p>
+<h3 id="ip-fraud-risk">Ip Fraud risk</h3>
+<p>This feature allows you to enter an IP as parameter:
+<img src="/images/bot4.png" alt="image"></p>
+<p>The IP address entered will be looked up with the Scamalytics Fraud risk API and send the following output, containing a risk score, a link to get more details and the overall risk level:
+<img src="/images/bot5.png" alt="image"></p>
+<p>The link redirects you to the webpage of Scamalytics with a more detailed analysis, on which you can find the operaton and the geographical location.
+<img src="/images/bot6.png" alt="image"></p>
+<h3 id="sample-check">Sample check</h3>
+<p>The Sample check features basically tells you all the information of the malware sample&rsquo;s hash that you entered as parameter.
+<img src="/images/bot7.png" alt="image"></p>
+<p>It queries the MalwareBazaar&rsquo;s database and the output contains the following information:
+<img src="/images/bot8.png" alt="image">
+<img src="/images/bot9.png" alt="image"></p>
+<h3 id="news">News</h3>
+<p>This last feature requires you to precise a channelId in which the bot will send every new post of the telemetry watch json base: <a href="https://raw.githubusercontent.com/joshhighet/ransomwatch/main/posts.json">https://raw.githubusercontent.com/joshhighet/ransomwatch/main/posts.json</a></p>
+<p>The scheduler is checking every hour if there is a new post, since it&rsquo;s not always the case it is possible that nothing happens times to times.</p>
+<h2 id="features-to-be-added">Features to be added</h2>
+<ul>
+<li>Crawling other websites to add more news/hour</li>
+<li>&hellip;</li>
+</ul>
+<h2 id="using-the-bot">Using the bot</h2>
+<p>The bot is not yet avaible on the Discord App Directory (working on it). If you want to use it beforehand feel free to contact me.</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Thanos ransomware analysis</title>
             <link>//localhost:1313/posts/thanos_ransomware/</link>
             <pubDate>Mon, 08 Apr 2024 00:00:00 +0000</pubDate>
             
             <guid>//localhost:1313/posts/thanos_ransomware/</guid>
-            <description>Context I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works. I decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled.</description>
+            <description>Context I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware are working. I decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled.</description>
             <content type="html"><![CDATA[<h2 id="context">Context</h2>
-<p>I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware works.
+<p>I executed Thanos Ransomware on a VM to analyze its behavior and to better understand how general ransomware are working.
 I decided to choose this one because most of the others can adapt themselves to a sandbox environment and so are not executing properly. Thanos Ransomware is also able to do it but since it is a ransomware-as-a-service, I found a sample in which the “Anti-VM” option was not enabled.</p>
 <h2 id="malware-execution">Malware execution</h2>
 <p>. . . Executing the binary
@@ -248,7 +297,43 @@ CleanMyStuff has been used here.
 <p>There were no more interesting things to see here with VISUAL-procmon that we did not figure out
 before in the analysis, but in the need to a report, or in live forensic case scenario, this tool is great to make graph and quickly understand what happens
 and how each process is executed.</p>
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="yara-rule-to-detect-thanos">Yara rule to detect Thanos</h2>
+<p>You can use the following Yara rule made by the McAfee Team to detect thanos ransomware(I might do my own in the future)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;pe&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>rule ransomware_thanos {
+</span></span><span style="display:flex;"><span>   meta:
+</span></span><span style="display:flex;"><span>      description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Thanos ransomware&#34;</span>
+</span></span><span style="display:flex;"><span>      author <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;McAfee ATR Team&#34;</span>
+</span></span><span style="display:flex;"><span>      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;v2&#34;</span>
+</span></span><span style="display:flex;"><span>      hash1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;58bfb9fa8889550d13f42473956dc2a7ec4f3abb18fd3faeaa38089d513c171f&#34;</span>
+</span></span><span style="display:flex;"><span>      hash2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;c460fc0d4fdaf5c68623e18de106f1c3601d7bd6ba80ddad86c10fd6ea123850&#34;</span>
+</span></span><span style="display:flex;"><span>      hash3 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;5d40615701c48a122e44f831e7c8643d07765629a83b15d090587f469c77693d&#34;</span>
+</span></span><span style="display:flex;"><span>      hash4 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ae66e009e16f0fad3b70ad20801f48f2edb904fa5341a89e126a26fd3fc80f75&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   strings:
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>x1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34; process call create cmd.exe /c </span><span style="color:#ae81ff">\\\\</span><span style="color:#e6db74">&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/c rd /s /q %SYSTEMDRIVE%</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">$Recycle.bin&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s3 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2QzNWhhL1Byb2Nlc3NIaWRlL21hc3Rlci9iaW5zL1Byb2Nlc3NIaWRlMzIuZXhl&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s4 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2QzNWhhL1Byb2Nlc3NIaWRlL21hc3Rlci9iaW5zL1Byb2Nlc3NIaWRlNjQuZXhl&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s5 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;config.sys&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s6 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;VGhpcyBwcm9ncmFtIHJlcXVpcmVzIE1pY3Jvc29mdCAuTkVUIEZyYW1ld29yayB2LiA0LjgyIG9yIHN1cGVyaW9yIHRvIHJ1biBwcm9wZXJseQ==&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s7 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1kOiAvb249ZDogL21heHNpemU9dW5ib3VuZGVk&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s8 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;U2V0LU1wUHJlZmVyZW5jZSAtRW5hYmxlQ29udHJvbGxlZEZvbGRlckFjY2VzcyBEaXNhYmxlZA==&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s9 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1mOiAvb249ZjogL21heHNpemU9dW5ib3VuZGVk&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s10 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1jOiAvb249YzogL21heHNpemU9dW5ib3VuZGVk&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s11 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1lOiAvb249ZTogL21heHNpemU9dW5ib3VuZGVk&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s12 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;GetCurrentProcessId&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s13 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1kOiAvb249ZDogL21heHNpemU9NDAxTUI=&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s14 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1jOiAvb249YzogL21heHNpemU9NDAxTUI=&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s15 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cmVzaXplIHNoYWRvd3N0b3JhZ2UgL2Zvcj1lOiAvb249ZTogL21heHNpemU9NDAxTUI=&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">$</span>s16 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;PHAgc3R5bGU9InRleHQtYWxpZ246IGNlbnRlcjsiPktleSBJZGVudGlmaWVyOiA=&#34;</span> fullword wide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   condition:
+</span></span><span style="display:flex;"><span>      ( uint16(<span style="color:#ae81ff">0</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0x5a4d</span> <span style="color:#f92672">and</span> filesize <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">300</span>KB <span style="color:#f92672">and</span> ( <span style="color:#ae81ff">1</span> of (<span style="color:#960050;background-color:#1e0010">$</span>x<span style="color:#f92672">*</span>) <span style="color:#f92672">and</span> <span style="color:#ae81ff">4</span> of them )
+</span></span><span style="display:flex;"><span>      ) <span style="color:#f92672">or</span> ( all of them )
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="conclusion">Conclusion</h2>
 <p>As a first malware analysis, Thanos ransomware is interesting, I would say the obfuscation was not
 really an issue, but it was still challenging to follow the main program and understand each function.</p>
 <p>Since all the classes and options of configuration were not used in this sample, I mostly focused on the

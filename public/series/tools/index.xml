@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tools on Blog | malwr101</title>
+    <link>//localhost:1313/series/tools/</link>
+    <description>Recent content in Tools on Blog | malwr101</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 09 Aug 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/series/tools/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CTI Discord bot</title>
+      <link>//localhost:1313/posts/discord_bot/</link>
+      <pubDate>Fri, 09 Aug 2024 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/discord_bot/</guid>
+      <description>Context I decided to create a Discord bot that could be useful, for me and maybe for some people. The bot has many use cases, on my side I will use it in malware analysis and has a threat intelligence news. Since I am often using discord, using this bot is also a faster way to get the information I need.&#xA;Bot Features The bot currently has 4 features, more might be added in the future if I get other ideas.</description>
+    </item>
+  </channel>
+</rss>
