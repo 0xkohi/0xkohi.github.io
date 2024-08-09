@@ -21,14 +21,14 @@ I decided to choose this one because most of the others can adapt themselves to 
 ## Malware execution
 
 . . . Executing the binary
-![coucou](/images/malwr1.png)
+![coucou](/images/thanos/malwr1.png)
 
 First thing appearing is this big info box/pop up giving the instruction to follow to decrypt our files.
 
 I noticed that all our files were not instantly encrypted, it took some time for the entire system.
 By trying to restart the VM (not recommended to do in a real case scenario), this window information
 screen before the password part appears.
-![coucou](/images/malwr4.png)
+![coucou](/images/thanos/malwr4.png)
 
 When looking more in detail at the encrypted files, we can see that it targets the whole C:\ local disk
 and around 5k of our files have been encrypted (on a new VM).
@@ -37,17 +37,17 @@ and around 5k of our files have been encrypted (on a new VM).
 
 To start our analysis, I went for some reversing. First, I tried to open the initial binary with IDA
 pro, but we realized it is a .NET framework:
-![coucou](/images/malwr2.png)
+![coucou](/images/thanos/malwr2.png)
 
 Instead, I went for dnSpy which is a reversing tool made for .NET so more adapted to our case.
 After opening it, we can already see some interesting class names. I will investigate some of them
 and follow the main class to understand when and why each of this class are called:
-![coucou](/images/malwr3.png)
+![coucou](/images/thanos/malwr3.png)
 
 I found out that the main class is called ”Program”. In this same class we can find the configuration
 file “.cctor” which is different for each sample and contains the options selected or not for the
 ransomware.
-![coucou](/images/malwr6.png)
+![coucou](/images/thanos/malwr6.png)
 
 In this file the “AntiVM” option is not activated so it explains why the ransomware
 executed itself properly in our environment.
@@ -58,14 +58,14 @@ Let’s start to follow the main program
 In a first place the ransomware calls a function called “HookApplication” with processes
 as parameters to write malicious code in the memory of the targeted processes.
 The processes name is written in base64:
-![coucou](/images/malwr7.png)
+![coucou](/images/thanos/malwr7.png)
 
 Right after, a PowerShell Cmdlet is executed, which deactivates the access control to the Windows
 Defender folder. This can be a way for the malware to bypass this antivirus and allow malicious
 processes to run.
-![coucou](/images/malwr9.png)
+![coucou](/images/thanos/malwr9.png)
 
-![coucou](/images/malwr12.png)
+![coucou](/images/thanos/malwr12.png)
 
 Then, we see a couple of defensive classes that are called, let’s try to understand how they work.
 
@@ -83,14 +83,14 @@ handle.
 
 So, in short, this function modifies the security descriptor of the current process to grant specific
 access rights to a user or group, to prevent the process from being killed or terminated.
-![coucou](/images/malwr14.png)
+![coucou](/images/thanos/malwr14.png)
 
 Now by looking at the main function of the binary, we see that the function is called only once and this
 way:
-![coucou](/images/malwr15.png)
+![coucou](/images/thanos/malwr15.png)
 
 If the process is admin (role 544), then the two AntiKill functions will be executed:
-![coucou](/images/malwr16.png)
+![coucou](/images/thanos/malwr16.png)
 
 The first prevent from launching the task manager and the second one from killing it as we just saw.
 
@@ -99,33 +99,33 @@ The first prevent from launching the task manager and the second one from killin
 It can also detect its environment with the anti_analysis class and more precisely with the
 RunAntiAnalysis function that calls some other functions to detect the manufacturer, the debugger
 the size of the disk, … to determine if the binary is executed in a VM:
-![coucou](/images/malwr17.png)
+![coucou](/images/thanos/malwr17.png)
 
 We notice that a function called “CleanMyStuff” is being used 3 times in the main program, by looking
 at it (as its name says it), the ransomware uses this function to clear its traces.
-![coucou](/images/malwr18.png)
+![coucou](/images/thanos/malwr18.png)
 
 First, it calls the function “ProcessCommand” to execute the following command line in with the cmd
 process:
-![coucou](/images/malwr19.png)
+![coucou](/images/thanos/malwr19.png)
 
 It starts with 3 ICMP packets echo request to 127.0.0.7 (could be used to add a delay), and then the
 command uses the fsutil utility to set a file data area to zero. It defines a file data area from offset 0
 with a length of 524288 bytes (or 512 KB). Regarding the hex characters, we can see on cyberchef.io
 that they represent “” :
-![coucou](/images/malwr20.png)
+![coucou](/images/thanos/malwr20.png)
 
 And inside of it we find the variable “$s”, which could most likely be a path to a file. The command
 ends by deleting what contains this same variable.
 
 About the second string encoded in base64:
-![coucou](/images/malwr21.png)
+![coucou](/images/thanos/malwr21.png)
 
 This is also a PowerShell command; it will open a pop-up window for 3 seconds asking for user choices
 (Y or N) to delete something that is not defined, it would most likely be a file path.
 
 Here is how the CleanMyStuff() function is called inside the main function:
-![coucou](/images/malwr22.png)
+![coucou](/images/thanos/malwr22.png)
 
 We see that in addition there is a command line: Process.GetCurrentProcess().Kill(), that basically kills
 the process running.
@@ -137,7 +137,7 @@ Net.exe, sc.exe, taskkill.exe, vssadmin.exe, del.exe
 
 As a first step, a random string of a defined length is declared as a dynamic pass, this string is then
 encrypted with a function called Encrypt ():
-![coucou](/images/malwr23.png)
+![coucou](/images/thanos/malwr23.png)
 
 
 This function encrypts a string by using a public key and the size of the key recovered with keySize and
@@ -147,23 +147,23 @@ We have a list of files extensions that are targeted and encrypted with the” C
 doing some verification on conditions, this same function uses another function called
 ”WorkerCrypter” who is responsible for encrypting all the files with the extensions listed, with some
 parameters:
-![coucou](/images/malwr24.png)
+![coucou](/images/thanos/malwr24.png)
 
 In each folder path that has been encrypted by the function, a text file with the instructions to decrypt
 the data is created.
-![coucou](/images/malwr25.png)
+![coucou](/images/thanos/malwr25.png)
 
-![coucou](/images/malwr26.png)
+![coucou](/images/thanos/malwr26.png)
 
 This text file is created on the desktop at the same time.
 
 ### Stage 3: Data exfiltration
 
 The ransomware then extracts some data via FTP with the following code:
-![coucou](/images/malwr27.png)
+![coucou](/images/thanos/malwr27.png)
 
 It creates a new Web Client instance with the victim’s IP address recovered from a website:
-![coucou](/images/malwr28.png)
+![coucou](/images/thanos/malwr28.png)
 
 By looking at the website on VirusTotal, we see that it is hosting some malicious files.
 https://www.virustotal.com/graph/embed/ge9bc64b0337e4c1da10c9de8124dc89c3283505d8a7e454cb780320244e88205
@@ -188,11 +188,11 @@ C:\Windows\System32\cmd.exe /C choice /CY/N/DY/T 3 & Del C:\Users\vboxuser\Deskt
 Here the binary executes the command: cmd.exe /C choice /C Y /N /D Y /T 3 & Del. As I described
 before in the analysis, the process deletes itself after answering the prompt automatically.
 We can also see that this command is in the function “CleanMyStuff” used to cover its traces:
-![coucou](/images/malwr18.png)
+![coucou](/images/thanos/malwr18.png)
 
-![coucou](/images/malwr19.png)
+![coucou](/images/thanos/malwr19.png)
 
-![coucou](/images/malwr21.png)
+![coucou](/images/thanos/malwr21.png)
 
 Detailed command:
  - ping 127.0.0.7 -n 3 > Nul: This command uses the ping utility to send three packets to the local IP
@@ -223,9 +223,9 @@ them and understand what it can really do if they are activated.
 
 There is a class called “rootkit” and by looking at it we understand that it downloads a file from the
 following URL:
-![coucou](/images/malwr29.png)
+![coucou](/images/thanos/malwr29.png)
 
-![coucou](/images/malwr30.png)
+![coucou](/images/thanos/malwr30.png)
 
 This URL downloads the raw code of another binary named ProcessHide64, available on GitHub. From
 the README file of the repository, this program permits to “Hide any process from any monitoring tool
@@ -233,10 +233,10 @@ that uses NTQuerySystemInformation”. We can see that the developers of the mal
 to hide their traces and are trying to slow the analysis process.
 
 In the same block of code, the malware clears the recycle bin with the following cmd command:
-![coucou](/images/malwr31.png)
+![coucou](/images/thanos/malwr31.png)
 
 Now let’s look at the network related functions, the program only uses one network function:
-![coucou](/images/malwr32.png)
+![coucou](/images/thanos/malwr32.png)
 
 This function is used at the beginning of the program which makes sense because the discovery is
 important for the next steps, if we take a closer look at the run function of the class network Spreading:
@@ -244,24 +244,24 @@ important for the next steps, if we take a closer look at the run function of th
   - NetworkSpreading
 
 The malware here does some network spreading when we look at the functions within it:
-![coucou](/images/malwr33.png)
+![coucou](/images/thanos/malwr33.png)
 
 We see that it downloads a tool:
-![coucou](/images/malwr34.png)
+![coucou](/images/thanos/malwr34.png)
 
 The URI was encoded in base64 so here it is in clear:
-![coucou](/images/malwr35.png)
+![coucou](/images/thanos/malwr35.png)
 
 This binary does not seem to be downloadable from this URI anymore, but on the website, we can see
 that PowerAdmin is a software used for Server Monitoring.
 
 In the same function, the ransomware takes the network information of the local machine as followed:
-![coucou](/images/malwr36.png)
+![coucou](/images/thanos/malwr36.png)
 
 So, it retrieves the IP address and the DNS entries.
 
 Something else interesting is in the run function:
-![coucou](/images/malwr37.png)
+![coucou](/images/thanos/malwr37.png)
 
 wmic.exe can be used to add exclusion and authorize malicious programs. Net.exe can be used to
 retrieve information about the network or even create connections.
@@ -269,7 +269,7 @@ In this case, the malware is trying to connect to other machines of the same loc
 is a successful connection (with the password specified) then the malware will copy itself to the
 connected machine and execute the file. As the name of the class says, it is network spreading.
 
-![coucou](/images/malwr38.png)
+![coucou](/images/thanos/malwr38.png)
 
 Regarding the last if () condition above, it tries different methods to connect to the machine, first it
 checks if there are credentials activated. If it is the case, then try the username “efadmin” in the group
@@ -295,7 +295,7 @@ which is helpful for malware analysis use cases.
 In the process list we see mshta.exe, I decided to start with this one because I saw there were .hta files
 in our system that appeared with the ransomware. By selecting it with VISION-procmon, and choosing
 the filter “File operations” here is the graph that we obtain:
-![coucou](/images/malwr5.png)
+![coucou](/images/thanos/malwr5.png)
 
 For more information on the process itself, mshta.exe is used to execute .hta files (HTML document)
 on the web. It can be used to execute malicious scripts or install malicious software, as it can bypass
@@ -312,7 +312,7 @@ For the next process, we select cmd.exe and we stay with the “File operations�
 the binary analysis in the covering track's part, the command line is executed but we had an unknown
 path. Well here the file that is being deleted is the malware itself, so we understand that the function
 CleanMyStuff has been used here.
-![coucou](/images/malwr8.png)
+![coucou](/images/thanos/malwr8.png)
 
 There were no more interesting things to see here with VISUAL-procmon that we did not figure out
 before in the analysis, but in the need to a report, or in live forensic case scenario, this tool is great to make graph and quickly understand what happens
