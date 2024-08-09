@@ -24,36 +24,36 @@ The bot currently has 4 features, more might be added in the future if I get oth
 There are three commands available and an automatic news channel.
 
 The commands of this bot are executable with the "/" prefix as follow
-![coucou](/images/discord/1.png)
+![coucou](/images/1.png)
 
 ### Group lookup
 
 Starting with the group lookup feature, this command allows you to enter an attacker group as parameter:
-![coucou](/images/discord/2.png)
+![coucou](/images/2.png)
 
 The group entered by the user will ask the json base of ransomwatch telemetry and send the output regarding if it exists or not.
 The output contains the name, fqdn, the last time it has been updated:
-![coucou](/images/discord/3.png)
+![coucou](/images/3.png)
 
 ### Ip Fraud risk
 
 This feature allows you to enter an IP as parameter:
-![coucou](/images/discord/4.png)
+![coucou](/images/4.png)
 
 The IP address entered will be looked up with the Scamalytics Fraud risk API and send the following output, containing a risk score, a link to get more details and the overall risk level:
-![coucou](/images/discord/5.png)
+![coucou](/images/5.png)
 
 The link redirects you to the webpage of Scamalytics with a more detailed analysis, on which you can find the operaton and the geographical location.
-![coucou](/images/discord/6.png)
+![coucou](/images/6.png)
 
 ### Sample check
 
 The Sample check features basically tells you all the information of the malware sample's hash that you entered as parameter.
-![coucou](/images/discord/7.png)
+![coucou](/images/7.png)
 
 It queries the MalwareBazaar's database and the output contains the following information:
-![coucou](/images/discord/8.png)
-![coucou](/images/discord/9.png)
+![coucou](/images/8.png)
+![coucou](/images/9.png)
 
 ### News
 
