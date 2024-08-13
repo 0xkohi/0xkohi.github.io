@@ -44,7 +44,7 @@ paginate     = 10
   # Socials media
   [[params.social]]
   name = "twitter"
-  url = "https://twitter.com/malwr101"
+  url = "https://twitter.com/0xk0hi"
   [[params.social]]
   name = "github"
   url = "https://github.com/malwr101"
