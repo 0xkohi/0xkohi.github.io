@@ -1,6 +1,6 @@
 ---
 author:
-  name: "malwr101"
+  name: "kohi"
 date: 2024-04-08
 linktitle: Thanos ransomware analysis
 type:

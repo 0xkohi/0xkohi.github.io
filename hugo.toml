@@ -1,5 +1,5 @@
-baseurl      = "0xkohi.github.com"
-title        = "Blog | malwr101"
+baseurl      = "kohi.github.com"
+title        = "Blog | kohi"
 languageCode = "en-us"
 theme        = "hello-friend-ng"
 paginate     = 10
@@ -47,7 +47,7 @@ paginate     = 10
   url = "https://twitter.com/0xk0hi"
   [[params.social]]
   name = "github"
-  url = "https://github.com/malwr101"
+  url = "https://github.com/0xkohi"
 
   # And you can even create generic menu
 

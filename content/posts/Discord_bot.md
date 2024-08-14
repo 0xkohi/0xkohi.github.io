@@ -1,6 +1,6 @@
 ---
 author:
-  name: "malwr101"
+  name: "kohi"
 date: 2024-08-09
 linktitle: CTI Discord bot
 type:

@@ -3,7 +3,7 @@ title = "About"
 date = "2024-04-08"
 aliases = ["about-us","about-hugo","contact"]
 [ author ]
-  name = "malwr101"
+  name = "kohi"
 +++
 
 I am a cybersecurity student interested in Malware analysis and Forensics.
