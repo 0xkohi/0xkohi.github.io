@@ -1,4 +1,4 @@
-baseurl      = "kohi.github.com"
+baseurl      = "0xkohi.github.com"
 title        = "Blog | kohi"
 languageCode = "en-us"
 theme        = "hello-friend-ng"
