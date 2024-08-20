@@ -43,7 +43,7 @@ This feature allows you to enter an IP as parameter:
 The IP address entered will be looked up with the Scamalytics Fraud risk API and send the following output, containing a risk score, a link to get more details and the overall risk level:
 ![image](/images/bot5.png)
 
-The link redirects you to the webpage of Scamalytics with a more detailed analysis, on which you can find the operaton and the geographical location.
+The link redirects you to the webpage of Scamalytics with a more detailed analysis, on which you can find the operator and the geographical location.
 ![image](/images/bot6.png)
 
 ### Sample check
