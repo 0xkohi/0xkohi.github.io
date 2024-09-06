@@ -26,7 +26,7 @@ Let's talk a bit about TailsOS in itself. It is a live OS that you can install o
 
 Each files/folders that you create on this OS will be removed after restarting, except in the folder "Persistant Storage", which can be created when first launching the OS.
 Or accessed by entering a passphrase at launch time too. For more information you can read their website : https://tails.net/index.en.html
-![image](/images/tails7.png)
+![image](/images/tails7.jpg)
 
 Concerning what interests us, we can read on their website that LUKS is used as encryption method for the persistant storage, which means that we will need find a way to break it.
 
@@ -39,17 +39,17 @@ We see here that our device contains 2 partitions : sdb1 and sdb2.
 After mounting the first partition, we see that it contains the following
 ![image](/images/tails2.png)
 
-Looking at the all folders and especially the Live folder, we find a squashfs partition but nothing intersting.
+Looking at the all folders and especially the Live folder, we find a squashfs partition but nothing interesting.
 ![image](/images/tails3.png)
 
-So the persistant folder is in the second one partition, let's mount it and what's inside
+So the persistant folder is in the second partition, let's mount it and see what's inside
 ![image](/images/tails4.png)
 
 
 ## Breaking the LUKS volume
 
 We can understand that the persistant folder is in this partition because it's encrypted with crypto_LUKS as said on the TailsOS website.
-One of our option here is to bruteforce, of course this is the easiest one, but we decided to do that for our challenge. However, there is a slight issue if someone try using hashcat, as of now they only support LUKSv1 bruteforcing, but here TailsOS uses LUKSv2. To break it, we can use a tool called "bruteforce-luks", which is working as follows
+One of our option here is to bruteforce, of course this is the easiest one, but we decided to do that for our challenge. However, there is a slight issue if someone try using hashcat, as of now they only support LUKSv1 bruteforcing, here TailsOS uses LUKSv2. To break it, we can use a tool called "bruteforce-luks", which is working as follows
 ![image](/images/tails5.png)
 
 Of course in our context, the human factor is the main problem since we just bruteforce the password. We did put a weak one for the challenge but TailsOS recommend using passphrase instead of password to prevent bruteforcing.
