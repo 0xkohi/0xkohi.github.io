@@ -7,7 +7,7 @@ type:
 - post
 - posts
 title: CTI Discord bot
-weight: 10
+weight: 2
 series:
 - Tools
 ---
