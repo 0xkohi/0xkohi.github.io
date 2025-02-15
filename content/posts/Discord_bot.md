@@ -57,14 +57,14 @@ It queries the MalwareBazaar's database and the output contains the following in
 
 ### News
 
-This last feature requires you to precise a channelId in which the bot will send every new post of the telemetry watch json base: https://raw.githubusercontent.com/joshhighet/ransomwatch/main/posts.json 
+This last feature requires you to precise a ChannelId in which the bot will send every new post of the telemetry watch json base: https://raw.githubusercontent.com/joshhighet/ransomwatch/main/posts.json 
 
-The scheduler is checking every hour if there is a new post, since it's not always the case it is possible that nothing happens times to times.
+The scheduler is checking every day at approximately midnight if there is a new post, since it's not always the case it is possible that nothing happens times to times.
 
 ## Features to be added
 
 - Crawling other websites to add more news/hour
-- ...
+- 
 
 ## Using the bot
 
