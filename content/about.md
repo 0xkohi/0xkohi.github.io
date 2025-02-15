@@ -6,7 +6,7 @@ aliases = ["about-us","about-hugo","contact"]
   name = "kohi"
 +++
 
-I am a cybersecurity student interested in Malware analysis and Forensics.
+I am a cybersecurity student interested in Malware analysis, CTI and Forensics.
 
 On this blog you will find posts about malware analysis, maybe some CTF writeups on pwn/rev/forensics and the discovery of cool tools. 
 
