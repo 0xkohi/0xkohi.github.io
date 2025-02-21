@@ -62,11 +62,6 @@ This last feature requires you to precise a ChannelId in which the bot will send
 
 The scheduler is checking every day at approximately midnight if there is a new post, since it's not always the case it is possible that nothing happens times to times.
 
-## Features to be added
-
-- Crawling other websites to add more news/hour
-- 
-
 ## Using the bot
 
 The bot is not yet avaible on the Discord App Directory (working on it). If you want to use it beforehand feel free to contact me.
