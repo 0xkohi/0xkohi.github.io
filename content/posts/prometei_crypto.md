@@ -24,10 +24,10 @@ My goal here is to find somes IoCs in order to write a Yara rule and be able to 
 ##  Static Analysis
 ### Unpacking 
 
-With Detect It Easy (die.exe) we can notice that our file is packed using UPX, which is pretty common. We also see that there is a "superposition" at the end of the file.
+With Detect It Easy (die.exe) we can notice that our file is packed using UPX, which is pretty common. We also see that there is a "superposition" at the end of the file corresponding to the footer of the elf.
 ![die_result](/images/prometei-23.png)
 
-I extracted the superposition with binwalk and it contains an encryption key and an ID used by the malware :
+I extracted the footer with binwalk and it contains an encryption key and an ID used by the malware :
 ![string_command_config](/images/prometei-7.png)
 
 Packers are used by malware developpers to hide their code and make it more complicated for people to analyse them.
@@ -36,9 +36,9 @@ For UPX, there is a linux tool as command line that we can use to unpack the bin
 
 The command did not work as expected, it is possible that either an UPX variant is used or the UPX format has been modified on purpose (headers modification).
 
-UPX headers contain specific fields that have to be present such as "l_magic", "p_filesize" and "p_blocksize" in order to be unpacked by the default UPX CLI. There is a blog from the JPCERT (https://blogs.jpcert.or.jp/en/2022/03/anti_upx_unpack.html) that helped me better understand how exactly they work and what could be modified by malware developper to prevent unpacking.
+UPX headers contain specific fields that have to be present such as "l_magic", "p_filesize" and "p_blocksize" in order to be unpacked by the default UPX CLI. There is a blog from the JPCERT (https://blogs.jpcert.or.jp/en/2022/03/anti_upx_unpack.html) that helped me better understand how exactly they work and what could be modified by malware developpers to prevent unpacking.
 
-I used a tool on GitHub : https://github.com/lcashdol/UPX in order to repair the UPX header, in case they were modified intentionnaly by the malware developper.
+I used a tool on GitHub : https://github.com/lcashdol/UPX in order to repair the UPX header, in case they were modified intentionnaly by the malware developpers.
 
 The result I got tells me that the headers are apparently not the issue : 
 ![header_check_upx](/images/prometei-24.png)
@@ -49,10 +49,10 @@ I lost too much time on that, and decided to check if anything was wrong again i
 ![HxD_1](/images/prometei-25.png)
 ![HxD_2](/images/prometei-26.png)
 
-I tried again to unpack it with the 'upx -d' CLI but it still did not work, so I looked at the footer and remembered the superposition that was indicated in Detect It Easy.
+I tried again to unpack it with the 'upx -d' CLI but it still did not work, so I looked at the footer and remembered the "superposition" that was indicated in Detect It Easy.
 ![HxD_3](/images/prometei-27.png)
 
-We can see here that the UPX footer seems right, and the superposition is the json part. I removed it and tried to unpack again and it worked !
+We can see here that the UPX footer seems right, and the "superposition" is the json part. I removed it and tried to unpack again and it worked !
 
 I suppose that when UPX tries to unpack a binary, it checks the footer and it probably saw this superpositon part and didn't took it has a real footer. It would also explain why the tool to repair UPX headers did not work, because
 they were able to find the right header and footer bytes. 
@@ -72,26 +72,26 @@ By searching for IP addresses, I found some URLs :
 
 The first one is flagged  as malicious on VirusTotal (VT) but nothing appears when I browse it.
 The second and third one do not seem to exist anymore.
-The last one is a bit more interesting, you can see at the end 'b32.i2p' which means that themalwares uses I2P (Invisible Internet Project), an 'anonymous' network that allows you to hide communications and on which you can host websites or services.
+The last one is a bit more interesting, you can see at the end 'b32.i2p' which means that the malwares uses I2P (Invisible Internet Project), an 'anonymous' network that allows you to hide communications and on which you can host websites or services.
 
-It is written 'b32' so it means that the address is encrypted with a base32 hash.
-We can see at the end that a file is written '/images/prometei.cgi', which corresponds to the sample we are analysing.
+It is written 'b32' so it means that the address is encoded in base32.
+We can see at the end that a file is written '/prometei.cgi', which corresponds to the sample we are analysing.
 
 Next, we see that a process called "updatecheckerd" is getting killed, something to investigate later.
 ![IoC2_strings](/images/prometei-21.png)
 
-I also found some strings related to crontab, maybe about persistance, something to investigate.
-![IoC3_persistance](/images/prometei-22.png)
+I also found some strings related to crontab, maybe about persistence, something to investigate.
+![IoC3_persistence](/images/prometei-22.png)
 
 Now we can open it in a disassembler (I used IDAv7 PRO here) to better understand how functions are working together.
 We see that there are around 1000 functions.
-I took some time to go throught most of them and rename the ones I was interested in. Thanks to the strings observation done before, I started by searching for the strings's occurence and lookup the functions.
+I took some time to go through most of them and rename the ones I was interested in. Thanks to the strings observation done before, I started by searching for the strings occurrence and lookup the functions.
 
 URL and communication Functions :
 Starting with the URLs that we found, I found in .rodata the URLs and jumped on the first function using them, after some reversing it looks like that : 
 ![IDA_1](/images/prometei-31.png)
 
-This function, starts by checking if the file /etc/pcc1 exists, if so, it reads its content and then copies it into memory with (&qword_BEA400). If not, it copies the url : http://dummy.zero/cgi-bin//images/prometei.cgi into memory, which is most likely a decoy.
+This function, starts by checking if the file /etc/pcc1 exists, if so, it reads its content and then copies it into memory with (&qword_BEA400). If not, it copies the url : http://dummy.zero/cgi-bin/prometei.cgi into memory, which is most likely a decoy.
 
 So in short, this function does a C2's conditional redirection behaviour, it selects a different URL depending on the presence of /etc/pcc1. I do not know what pcc1 is yet, it could be a flag of a sandbox or a way to check if the host is already existed. I will investigate it later during the dynamic analysis.
 
@@ -101,7 +101,7 @@ Now if we take a look at the last two URLs and the function related, we can see 
 - "?&i=%s&r=%d"
 - "&answ=%s"
 
-What I understood here is that the function formats HTTP requests with dynamic parameters, probably deals with C2 responses, generates an HTTP "200 OK" itself. And uses an encryption key. I will see try figuring it more in details during the dynamic analysis by following the network traffic. 
+What I understood here is that the function formats HTTP requests with dynamic parameters, probably deals with C2 responses, generates an HTTP "200 OK" itself. And uses an encryption key. I will try figuring it more in details during the dynamic analysis by following the network traffic. 
 
 Key functions : 
 I checked for other strings linked to encryption keys and found another function that is using it as well, here is how it looks after analysis :
@@ -110,7 +110,7 @@ I checked for other strings linked to encryption keys and found another function
 From what I understood, this function verifies if something (most likely a key) is present in the buffer "qword_BEA400" and it then generates an URL with an ID and an Enckey.
 Afterwards, it sends the HTTP request and if the value "64" is returned, it does some other actions.
 
-I remembered here that in the superposition of the main binary (before unpacking it) there was a json configuration : 
+I remembered here that in the footer of the main binary (before unpacking it) there was a json configuration : 
 {"config":1,"id":"2fUXR0axaNBdA2c7","enckey":"FqVSMYZkxrPc7BUz4RU3lhCdQ1694GUjaZ4HlVrbFz+Lfd5MebkRBJijqZWXCGtKoWsQpHT+hcYwbjTgiTz6A56MsyScYt+BYEa5rjRckD30YFYDXIGTWc0kd+6m+WhRPdiWjgKlZy8YqEF3nUIcFFCtHwshuwKWn9up+Q2wCjw="}
 
 It means that the malware embeds a configuration with an enckey value. What we can get out of this base64 key is its lenght : 129 bytes after being decoded. 
@@ -126,8 +126,8 @@ The next function I was interested in is the one containing strings of processes
 - netsync
 - nvsync
 
-Persistance function :
-A crucial step in most of the malware is the persistance.
+Persistence function :
+A crucial step in most of malwares is the persistence.
 During the analysis of the process functions, I also tried to understand what the binary uplugplay is, and I found an interesting function that was processing this other binary, here are the interesting parts :
 ![IDA_3](/images/prometei-33.png)
 
@@ -142,7 +142,7 @@ ExecStart=/usr/sbin/uplugplay OR /etc/uplugplay
 [Install]
 WantedBy=multi-user.target
 
-This file is saved in "/lib/systemd/system/uplugplay.service"
+This file is saved in "/lib/systemd/system/uplugplay.service".
 Multiple systemd commands are executed :
 - systemctl stop uplugplay.service
 - systemctl daemon-reload
@@ -158,13 +158,13 @@ It is a persistence mechanism by memory injection that installed itself with a s
 
 I will try during the dynamic analysis to find more information on the code in uplugplay.
 
-I saw at the beginning some occurence of crontab, I wanted to take a look to see if it was related to the persistance we just saw.
+I saw at the beginning some occurrence of crontab, I wanted to take a look to see if it was related to the persistence we just saw.
 ![IDA_5](/images/prometei-37.png)
 
 In this function, we see that a cron task is created "task.cron" set to be executed at each reboot. Then the path of a file is added "byte_1573A80", probably uplugplay.
 
 The current crontab is retrieved with "crontab -l" and a job research is done. If "no crontab" it creates a new entry, else, it does not insert a second one.
-There is a writing operation in the temporary file "task.cron" and its installation with "system("crontab task.cron")". Following this, the temporary file is delete "delete_file("task.cron")".
+There is a writing operation in the temporary file "task.cron" and its installation with "system("crontab task.cron")". Following this, the temporary file is deleted "delete_file("task.cron")".
 ![IDA_6](/images/prometei-36.png)
 
 To find "crontab task.cron", we see that the variable concatenates crontab with &v19[9] which is the start of 'task.cron' since in v19 we already have :  
@@ -194,7 +194,7 @@ The command "start_mining" is controlled by a second function that we can call "
 
 If we take a look at the command "stop_mining", its goal is to kill the process "updatecheckerd" with pkill.
 
-Another thing that I found is that the buffer qword_BE9D40 seems to contains interesting information, I found the variable that saves the json configuration in the buffer: qword_BEA400 and in which function the key is used : sub_409F4D. I will try to retrieve the content of qword_BE9D40 during the dynamic analysis.
+Another thing that I found is that the buffer qword_BE9D40 seems to contain interesting information, I found the variable that saves the json configuration in the buffer: qword_BEA400 and in which function the key is used : sub_409F4D. I will try to retrieve the content of qword_BE9D40 during the dynamic analysis.
 
 ### How the malware works
 
@@ -233,10 +233,10 @@ First let's just execute the malware without arguments :
 ![mal_execution_1](/images/prometei-11.png)
 
 So we have couple errors, the first one tells us that the malware cannot operate because it has not been booted with systemd. Indeed it is the case because we are inside a docker container, this could be a protection against malware analysis (like anti-vm, anti-sandboxes, ...)
-The second error is more specific, it says that a Host is down. We could think that the malware tries to communicate with something. Since the docker is not connected to the internet, it might not reach the host in question.
+The second error is more specific, it says that a Host is down. It happens because the socket D-Bus that the malware tries to use does not exist in this environment.
 
 What we can do here is look at the system calls made by the malware.
-The command 'strace' allows us to do it with several parameters : "strace -ff -o strace.out.log .//images/prometei.elf"
+The command 'strace' allows us to do it with several parameters : "strace -ff -o strace.out.log ./prometei.elf"
 We can observe some logs in the terminal, there are again systemd errors because we are not in a systemd environment (docker) but we have the creation of a symlink with the installation of the systemctl service uplugplay, which is something we identified earlier in the static analysis :
 ![strace1](/images/prometei-39.png)
 
@@ -265,7 +265,7 @@ We can retrieve the hash of the uplugplay file, as IoC :
 
 There were too many systemd errors, so I executed it in a Virtual Machine instead in order to see more things on the processes and the network traffic.
 
-By starting service.uplugplay with systemctl, we can follow its activity. Regarding the open ports, we see that uplugplay is listening on TCP port 89 and many orther UPD ports.
+By starting service.uplugplay with systemctl, we can follow its activity. Regarding the open ports, we see that uplugplay is listening on TCP port 89 and many other UPD ports.
 ![alt text](/images/prometei-43.png)
 
 Now I can try communicating with it locally, I have a first terminal with tcpdump running, listening on port 89, and a second terminal sending the command we saw during the static analysis (start_mining, stop_mining, etc) with ncat. My first try was with start_mining and we see that it works pretty good :
@@ -281,13 +281,13 @@ I did not observe any of the process "updatecheckerd", "netwalker", "walker" bei
 
 ## Conclusion
 
-With the static and dynamic analysis performed of /images/prometei, I was able to better understand the malware's behaviour and identify this list of IoCs:
+With the static and dynamic analysis performed of prometei, I was able to better understand the malware's behaviour and identify this list of IoCs:
 
 1. The persistence file : uplugplay
 2. The hash of uplugplay : sha1=4419a8accd996b8b6ec88a166d2263ea8ef5aa69
 2. The cron task : task.cron (with @reboot)
 3. The usage of the commands pgrep and pidof
-5. The URLs : http://dummy.zero/cgi-bin//images/prometei.cgi, https://gb7ni5rgeexdcncj.onion/cgi-bin//images/prometei.cgi, http://mkhkjxgchtfgu7uhofxzgoawntfzrkdccymveektqgpxrpjb72oq.b32.i2p/cgi-bin//images/prometei.cgi
+5. The URLs : http://dummy.zero/cgi-bin/prometei.cgi, https://gb7ni5rgeexdcncj.onion/cgi-bin/prometei.cgi, http://mkhkjxgchtfgu7uhofxzgoawntfzrkdccymveektqgpxrpjb72oq.b32.i2p/cgi-bin//prometei.cgi
 6. The processes : updatecheckerd, netwalker, walker, nvsync, netsync
 
 
@@ -315,9 +315,9 @@ rule IoCs_Prometei
         $cronfile = "task.cron"
         $cmd1 = "pgrep"
         $cmd2 = "pidof"
-        $url1 = "http://dummy.zero/cgi-bin//images/prometei.cgi"
-        $url2 = "https://gb7ni5rgeexdcncj.onion/cgi-bin//images/prometei.cgi"
-        $url3 = "http://mkhkjxgchtfgu7uhofxzgoawntfzrkdccymveektqgpxrpjb72oq.b32.i2p/cgi-bin//images/prometei.cgi"
+        $url1 = "http://dummy.zero/cgi-bin//prometei.cgi"
+        $url2 = "https://gb7ni5rgeexdcncj.onion/cgi-bin//prometei.cgi"
+        $url3 = "http://mkhkjxgchtfgu7uhofxzgoawntfzrkdccymveektqgpxrpjb72oq.b32.i2p/cgi-bin/prometei.cgi"
     condition:
         (
             any of ($bin*) and
