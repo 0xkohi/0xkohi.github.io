@@ -228,7 +228,6 @@ I used Lauri Wired's lab which works on docker : https://github.com/LaurieWired/
 The setup I have is a local ubuntu VM on which I connect through SSH and launch the script which creates a docker container where I can manipulate the malware. This allows me to execute the malware and just start a new docker container whenever I want.
 
 ### Follow our findings
-///check if /etc/pcc1 is created to see its content, check for the IoCs found
 
 First let's just execute the malware without arguments : 
 ![mal_execution_1](/images/prometei-11.png)
@@ -295,6 +294,7 @@ With the static and dynamic analysis performed of /images/prometei, I was able t
 ### Detection rule
 
 With those IoCs, we are able to write a Yara rule that will help detect if Prometei is on your host/network.
+```python
 rule IoCs_Prometei
 {
     meta:
