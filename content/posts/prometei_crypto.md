@@ -265,7 +265,7 @@ We can retrieve the hash of the uplugplay file, as IoC :
 
 There were too many systemd errors, so I executed it in a Virtual Machine instead in order to see more things on the processes and the network traffic.
 
-By starting service.uplugplay with systemctl, we can follow its activity. Regarding the open ports, we see that uplugplay is listening on TCP port 89 and many other UPD ports.
+By starting service.uplugplay with systemctl, we can follow its activity. Regarding the open ports, we see that uplugplay is listening on TCP port 89 and many other UDP ports.
 ![alt text](/images/prometei-43.png)
 
 Now I can try communicating with it locally, I have a first terminal with tcpdump running, listening on port 89, and a second terminal sending the command we saw during the static analysis (start_mining, stop_mining, etc) with ncat. My first try was with start_mining and we see that it works pretty good :
