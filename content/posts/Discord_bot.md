@@ -14,8 +14,7 @@ series:
 
 ## Context
 
-I decided to create a Discord bot that could be useful, for me and maybe for some people. The bot has many use cases, on my side I will use it in malware analysis and has
-a threat intelligence news.
+I decided to create a Discord bot that could be useful, for me and maybe for some people. The bot has many use cases, on my side I will use it in malware analysis and as a threat intelligence news.
 Since I am often using discord, using this bot is also a faster way to get the information I need.
 
 ## Bot Features
