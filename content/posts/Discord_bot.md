@@ -63,4 +63,4 @@ The scheduler is checking every day at approximately midnight if there is a new 
 
 ## Using the bot
 
-The bot is not yet avaible on the Discord App Directory (working on it). If you want to use it beforehand feel free to contact me.
+I am currently in the process of redoing the bot in Python, because I had done it in javascript at the beginning. Once it's done it will be available on my Github. (update 04/07/2025)
