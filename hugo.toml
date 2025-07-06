@@ -28,7 +28,7 @@ paginate     = 10
   images = [""]
 
   [params.footer]
-    trademark = 2024
+    trademark = 2025
     rss = true
     copyright = false
     author = false
