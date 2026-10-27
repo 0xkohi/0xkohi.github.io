@@ -2,6 +2,8 @@
 author:
   name: "kohi"
 date: 2024-09-02
+aliases:
+- /posts/tailos/
 linktitle: TailsOS - retrieving files from Persistent Storage
 type:
 - post

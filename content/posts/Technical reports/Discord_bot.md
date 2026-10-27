@@ -2,6 +2,8 @@
 author:
   name: "kohi"
 date: 2024-08-09
+aliases:
+- /posts/discord_bot/
 linktitle: CTI Discord bot
 type:
 - post

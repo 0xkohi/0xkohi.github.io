@@ -1,0 +1,92 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Spirits Opinion on Blog | kohi</title>
+        <link>//localhost:1313/posts/spirits-opinion/</link>
+        <description>Recent content in Spirits Opinion on Blog | kohi</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+        <atom:link href="//localhost:1313/posts/spirits-opinion/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>French spirits</title>
+            <link>//localhost:1313/posts/spirits-opinion/french/</link>
+            <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+            
+            <guid>//localhost:1313/posts/spirits-opinion/french/</guid>
+            <description></description>
+            <content type="html"><![CDATA[]]></content>
+        </item>
+        
+        <item>
+            <title>Irish whiskeys</title>
+            <link>//localhost:1313/posts/spirits-opinion/irish/</link>
+            <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+            
+            <guid>//localhost:1313/posts/spirits-opinion/irish/</guid>
+            <description>Teeling Opinion Fine one, would not recommened to start a degustation with this one in order to taste all the aromas, probably as a second one.
+Score 3/5
+Waterford Opinion Quite strong alcohol but good flavour
+Score 3/5</description>
+            <content type="html"><![CDATA[<h2 id="teeling">Teeling</h2>
+<p><img src="/images/irish_1.jpg" alt="image"></p>
+<h3 id="opinion">Opinion</h3>
+<p>Fine one, would not recommened to start a degustation with this one in order to taste all the aromas, probably as a second one.</p>
+<h3 id="score">Score</h3>
+<p>3/5</p>
+<h2 id="waterford">Waterford</h2>
+<p><img src="/images/irish_2.png" alt="image"></p>
+<h3 id="opinion-1">Opinion</h3>
+<p>Quite strong alcohol but good flavour</p>
+<h3 id="score-1">Score</h3>
+<p>3/5</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Rhums</title>
+            <link>//localhost:1313/posts/spirits-opinion/rhums/</link>
+            <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+            
+            <guid>//localhost:1313/posts/spirits-opinion/rhums/</guid>
+            <description>St. Dominique Arrangé - Litchi &amp;amp; Passion fruit Opinion Really good mix of fruits, not too sweet, alcohol well balanced
+Score 4/5
+Rivière du Mât Arrangé - Goyave &amp;amp; Litchi Opinion Really good mix of fruits, a bit too sweet but great overall
+Score 4/5</description>
+            <content type="html"><![CDATA[<h2 id="st-dominique-arrangé---litchi--passion-fruit">St. Dominique Arrangé - Litchi &amp; Passion fruit</h2>
+<p><img src="/images/rhum_1.jpg" alt="image"></p>
+<h3 id="opinion">Opinion</h3>
+<p>Really good mix of fruits, not too sweet, alcohol well balanced</p>
+<h3 id="score">Score</h3>
+<p>4/5</p>
+<h2 id="rivière-du-mât-arrangé---goyave--litchi">Rivière du Mât Arrangé - Goyave &amp; Litchi</h2>
+<p><img src="/images/rhum_2.jpg" alt="image"></p>
+<h3 id="opinion-1">Opinion</h3>
+<p>Really good mix of fruits, a bit too sweet but great overall</p>
+<h3 id="score-1">Score</h3>
+<p>4/5</p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Scotland whiskies</title>
+            <link>//localhost:1313/posts/spirits-opinion/scotland/</link>
+            <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+            
+            <guid>//localhost:1313/posts/spirits-opinion/scotland/</guid>
+            <description></description>
+            <content type="html"><![CDATA[]]></content>
+        </item>
+        
+        <item>
+            <title>US whiskeys</title>
+            <link>//localhost:1313/posts/spirits-opinion/us/</link>
+            <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+            
+            <guid>//localhost:1313/posts/spirits-opinion/us/</guid>
+            <description></description>
+            <content type="html"><![CDATA[]]></content>
+        </item>
+        
+    </channel>
+</rss>

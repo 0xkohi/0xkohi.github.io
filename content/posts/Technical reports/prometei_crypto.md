@@ -2,6 +2,8 @@
 author:
   name: "kohi"
 date: 2025-05-01
+aliases:
+- /posts/prometei_crypto/
 linktitle: Prometei - Static and dynamic analysis
 type:
 - post

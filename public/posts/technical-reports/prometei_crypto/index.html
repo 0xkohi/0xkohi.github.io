@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="map[name:kohi]">
+<meta name="description" content="Contexte Sample at : https://bazaar.abuse.ch/sample/8cfe4b3888c08ead3574701b20d70bbbbf86b79faeb2fde1d072e090f56d60e5/
+Usually I mostly focus on Windows malwares, but I wanted to try looking at a Linux one. So I went for the first ELF sample that I saw on Malwarebazaar, and it is a crypto miner called Prometei.
+My goal here is to find somes IoCs in order to write a Yara rule and be able to detect it, I will not go into too much details on the reverse part, sorry in advance." />
+<meta name="keywords" content="homepage, blog" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="//localhost:1313/posts/technical-reports/prometei_crypto/" />
+
+
+    <title>
+        
+            Prometei - Static and dynamic analysis :: Blog | kohi 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.42d7e5d8f6c901650f2650c4e0583015187a3ff44dae32801d906f901d2bce8d.css" integrity="sha256-Qtfl2PbJAWUPJlDE4FgwFRh6P/RNrjKAHZBvkB0rzo0=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Prometei - Static and dynamic analysis">
+<meta itemprop="description" content="Contexte Sample at : https://bazaar.abuse.ch/sample/8cfe4b3888c08ead3574701b20d70bbbbf86b79faeb2fde1d072e090f56d60e5/
+Usually I mostly focus on Windows malwares, but I wanted to try looking at a Linux one. So I went for the first ELF sample that I saw on Malwarebazaar, and it is a crypto miner called Prometei.
+My goal here is to find somes IoCs in order to write a Yara rule and be able to detect it, I will not go into too much details on the reverse part, sorry in advance."><meta itemprop="datePublished" content="2025-05-01T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2025-05-01T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2960"><meta itemprop="image" content="//localhost:1313/" />
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="//localhost:1313/" /><meta name="twitter:title" content="Prometei - Static and dynamic analysis"/>
+<meta name="twitter:description" content="Contexte Sample at : https://bazaar.abuse.ch/sample/8cfe4b3888c08ead3574701b20d70bbbbf86b79faeb2fde1d072e090f56d60e5/
+Usually I mostly focus on Windows malwares, but I wanted to try looking at a Linux one. So I went for the first ELF sample that I saw on Malwarebazaar, and it is a crypto miner called Prometei.
+My goal here is to find somes IoCs in order to write a Yara rule and be able to detect it, I will not go into too much details on the reverse part, sorry in advance."/>
+
+
+
+    <meta property="og:title" content="Prometei - Static and dynamic analysis" />
+<meta property="og:description" content="Contexte Sample at : https://bazaar.abuse.ch/sample/8cfe4b3888c08ead3574701b20d70bbbbf86b79faeb2fde1d072e090f56d60e5/
+Usually I mostly focus on Windows malwares, but I wanted to try looking at a Linux one. So I went for the first ELF sample that I saw on Malwarebazaar, and it is a crypto miner called Prometei.
+My goal here is to find somes IoCs in order to write a Yara rule and be able to detect it, I will not go into too much details on the reverse part, sorry in advance." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/posts/technical-reports/prometei_crypto/" /><meta property="og:image" content="//localhost:1313/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2025-05-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-05-01T00:00:00+00:00" />
+
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2025-05-01 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="//localhost:1313/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                hello</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">About</a></li><li><a href="/posts/">Posts</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        14 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="//localhost:1313/posts/technical-reports/prometei_crypto/">Prometei - Static and dynamic analysis</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <h2 id="contexte">Contexte</h2>
+<p>Sample at : <a href="https://bazaar.abuse.ch/sample/8cfe4b3888c08ead3574701b20d70bbbbf86b79faeb2fde1d072e090f56d60e5/">https://bazaar.abuse.ch/sample/8cfe4b3888c08ead3574701b20d70bbbbf86b79faeb2fde1d072e090f56d60e5/</a></p>
+<p>Usually I mostly focus on Windows malwares, but I wanted to try looking at a Linux one. So I went for the first ELF sample that I saw on Malwarebazaar, and it is a crypto miner called Prometei.</p>
+<p>My goal here is to find somes IoCs in order to write a Yara rule and be able to detect it, I will not go into too much details on the reverse part, sorry in advance.</p>
+<h2 id="static-analysis">Static Analysis</h2>
+<h3 id="unpacking">Unpacking</h3>
+<p>With Detect It Easy (die.exe) we can notice that our file is packed using UPX, which is pretty common. We also see that there is a &ldquo;superposition&rdquo; at the end of the file corresponding to the footer of the elf.
+<img src="/images/prometei-23.png" alt="die_result"></p>
+<p>I extracted the footer with binwalk and it contains an encryption key and an ID used by the malware :
+<img src="/images/prometei-7.png" alt="string_command_config"></p>
+<p>Packers are used by malware developpers to hide their code and make it more complicated for people to analyse them.
+For UPX, there is a linux tool as command line that we can use to unpack the binary and retrieve the source code.
+<img src="/images/prometei-10.png" alt="upx_command"></p>
+<p>The command did not work as expected, it is possible that either an UPX variant is used or the UPX format has been modified on purpose (headers modification).</p>
+<p>UPX headers contain specific fields that have to be present such as &ldquo;l_magic&rdquo;, &ldquo;p_filesize&rdquo; and &ldquo;p_blocksize&rdquo; in order to be unpacked by the default UPX CLI. There is a blog from the JPCERT (<a href="https://blogs.jpcert.or.jp/en/2022/03/anti_upx_unpack.html">https://blogs.jpcert.or.jp/en/2022/03/anti_upx_unpack.html</a>) that helped me better understand how exactly they work and what could be modified by malware developpers to prevent unpacking.</p>
+<p>I used a tool on GitHub : <a href="https://github.com/lcashdol/UPX">https://github.com/lcashdol/UPX</a> in order to repair the UPX header, in case they were modified intentionnaly by the malware developpers.</p>
+<p>The result I got tells me that the headers are apparently not the issue :
+<img src="/images/prometei-24.png" alt="header_check_upx"></p>
+<p>I tried to unpack it manually with r2 by setting a breakpoint on the first munmap syscall, that we can obtain with strace and then dump the rest of the ELF but it did not work as well.</p>
+<p>I lost too much time on that, and decided to check if anything was wrong again in the header. I saw that usually the &lsquo;p_filesize&rsquo; bits are doubled, but it was not the case here so I modified the hex bits with HxD as follow :
+<img src="/images/prometei-25.png" alt="HxD_1">
+<img src="/images/prometei-26.png" alt="HxD_2"></p>
+<p>I tried again to unpack it with the &lsquo;upx -d&rsquo; CLI but it still did not work, so I looked at the footer and remembered the &ldquo;superposition&rdquo; that was indicated in Detect It Easy.
+<img src="/images/prometei-27.png" alt="HxD_3"></p>
+<p>We can see here that the UPX footer seems right, and the &ldquo;superposition&rdquo; is the json part. I removed it and tried to unpack again and it worked !</p>
+<p>I suppose that when UPX tries to unpack a binary, it checks the footer and it probably saw this superpositon part and didn&rsquo;t took it has a real footer. It would also explain why the tool to repair UPX headers did not work, because
+they were able to find the right header and footer bytes.
+At least having this issue helped me better understand how UPX works.</p>
+<p>If we open it again with Detect It Easy, we are now able to see the Compiler, the and the language of the source code.
+<img src="/images/prometei-28.png" alt="die_2"></p>
+<h3 id="researching-iocs">Researching IoCs</h3>
+<p>Now that we have our sample unpacked, we can try different things to understand how it works.
+Let&rsquo;s start with the classic strings command. Here I used a mandiant tool called flarestrings, which is composed of two scripts flarestrings and rank_strings. The second one allows us to rank all the strings of a binary from what appears to be malicous to non-malicious based on machine learning model. The strings appearing first by using this script are the following :
+<img src="/images/prometei-30.png" alt="flarestrings_result"></p>
+<p>By searching for IP addresses, I found some URLs :
+<img src="/images/prometei-20.png" alt="IoC1_strings"></p>
+<p>The first one is flagged  as malicious on VirusTotal (VT) but nothing appears when I browse it.
+The second and third one do not seem to exist anymore.
+The last one is a bit more interesting, you can see at the end &lsquo;b32.i2p&rsquo; which means that the malwares uses I2P (Invisible Internet Project), an &lsquo;anonymous&rsquo; network that allows you to hide communications and on which you can host websites or services.</p>
+<p>It is written &lsquo;b32&rsquo; so it means that the address is encoded in base32.
+We can see at the end that a file is written &lsquo;/prometei.cgi&rsquo;, which corresponds to the sample we are analysing.</p>
+<p>Next, we see that a process called &ldquo;updatecheckerd&rdquo; is getting killed, something to investigate later.
+<img src="/images/prometei-21.png" alt="IoC2_strings"></p>
+<p>I also found some strings related to crontab, maybe about persistence, something to investigate.
+<img src="/images/prometei-22.png" alt="IoC3_persistence"></p>
+<p>Now we can open it in a disassembler (I used IDAv7 PRO here) to better understand how functions are working together.
+We see that there are around 1000 functions.
+I took some time to go through most of them and rename the ones I was interested in. Thanks to the strings observation done before, I started by searching for the strings occurrence and lookup the functions.</p>
+<p>URL and communication Functions :
+Starting with the URLs that we found, I found in .rodata the URLs and jumped on the first function using them, after some reversing it looks like that :
+<img src="/images/prometei-31.png" alt="IDA_1"></p>
+<p>This function, starts by checking if the file /etc/pcc1 exists, if so, it reads its content and then copies it into memory with (&amp;qword_BEA400). If not, it copies the url : <a href="http://dummy.zero/cgi-bin/prometei.cgi">http://dummy.zero/cgi-bin/prometei.cgi</a> into memory, which is most likely a decoy.</p>
+<p>So in short, this function does a C2&rsquo;s conditional redirection behaviour, it selects a different URL depending on the presence of /etc/pcc1. I do not know what pcc1 is yet, it could be a flag of a sandbox or a way to check if the host is already existed. I will investigate it later during the dynamic analysis.</p>
+<p>Now if we take a look at the last two URLs and the function related, we can see some interesting strings :</p>
+<ul>
+<li>&amp;i=%s&amp;enckey=%s&amp;answ=%s</li>
+<li>&ldquo;?&amp;i=%s&amp;answ=OK&rdquo;</li>
+<li>&ldquo;?&amp;i=%s&amp;r=%d&rdquo;</li>
+<li>&ldquo;&amp;answ=%s&rdquo;</li>
+</ul>
+<p>What I understood here is that the function formats HTTP requests with dynamic parameters, probably deals with C2 responses, generates an HTTP &ldquo;200 OK&rdquo; itself. And uses an encryption key. I will try figuring it more in details during the dynamic analysis by following the network traffic.</p>
+<p>Key functions :
+I checked for other strings linked to encryption keys and found another function that is using it as well, here is how it looks after analysis :
+<img src="/images/prometei-32.png" alt="IDA_2"></p>
+<p>From what I understood, this function verifies if something (most likely a key) is present in the buffer &ldquo;qword_BEA400&rdquo; and it then generates an URL with an ID and an Enckey.
+Afterwards, it sends the HTTP request and if the value &ldquo;64&rdquo; is returned, it does some other actions.</p>
+<p>I remembered here that in the footer of the main binary (before unpacking it) there was a json configuration :
+{&ldquo;config&rdquo;:1,&ldquo;id&rdquo;:&ldquo;2fUXR0axaNBdA2c7&rdquo;,&ldquo;enckey&rdquo;:&ldquo;FqVSMYZkxrPc7BUz4RU3lhCdQ1694GUjaZ4HlVrbFz+Lfd5MebkRBJijqZWXCGtKoWsQpHT+hcYwbjTgiTz6A56MsyScYt+BYEa5rjRckD30YFYDXIGTWc0kd+6m+WhRPdiWjgKlZy8YqEF3nUIcFFCtHwshuwKWn9up+Q2wCjw=&rdquo;}</p>
+<p>It means that the malware embeds a configuration with an enckey value. What we can get out of this base64 key is its lenght : 129 bytes after being decoded.
+In the function we just analysed, we saw that the variable &rsquo;enckey&rsquo; was dynamically generateed in qword_BE9B40, so it is possible that the json configuration is loaded at runtime and injected to the variables qword_BE9B40 and id (if the composition is a Key + an IV).</p>
+<p>So basically this function retrieves the value of the json configuration in the buffer &ldquo;qword_BEA400&rdquo;, modifies the initial base64 by changing the + to - and the = to _ in the function that i renamed &ldquo;b64_operation&rdquo; and then integrates in into an URL.</p>
+<p>Process functions :
+The next function I was interested in is the one containing strings of processes, it could be interesting to see what are the process created and what are they used for. I will not spend too much time reversing this one as I prefer looking at them during the dynamic analysis. Here is the list of the different process that I will try following later :</p>
+<ul>
+<li>pdefenderd</li>
+<li>walker</li>
+<li>netwalker</li>
+<li>netsync</li>
+<li>nvsync</li>
+</ul>
+<p>Persistence function :
+A crucial step in most of malwares is the persistence.
+During the analysis of the process functions, I also tried to understand what the binary uplugplay is, and I found an interesting function that was processing this other binary, here are the interesting parts :
+<img src="/images/prometei-33.png" alt="IDA_3"></p>
+<p>Here the first thing done is clearing byte_537080. Then it is compared with the path &ldquo;/etc/uplugplay&rdquo; and &ldquo;/usr/sbin/uplugplay&rdquo;. There is a check if the process are already running.
+Following this, there is a creation of systemd files with the fields :
+[Unit]
+Description=UPlugPlay
+After=multi-user.target
+[Service]
+Type=forking
+ExecStart=/usr/sbin/uplugplay OR /etc/uplugplay
+[Install]
+WantedBy=multi-user.target</p>
+<p>This file is saved in &ldquo;/lib/systemd/system/uplugplay.service&rdquo;.
+Multiple systemd commands are executed :</p>
+<ul>
+<li>systemctl stop uplugplay.service</li>
+<li>systemctl daemon-reload</li>
+<li>systemctl enable uplugplay.service</li>
+<li>systemctl start uplugplay.service</li>
+</ul>
+<p>At the end, the function waits for 23secs for &ldquo;unk_536A40&rdquo; to be accessible, if so &ldquo;OK&rdquo; is printed, if not &ldquo;Fail!!!&rdquo; is printed.</p>
+<p>So what we can understand from this function is that the content of the buffer &ldquo;qword_BEA400&rdquo; is copied in a temporary buffer &ldquo;byte_537080&rdquo; and this buffer is then wrttien in uplugplay in /usr/sbin or /etc/.
+<img src="/images/prometei-34.png" alt="IDA_4"></p>
+<p>It is a persistence mechanism by memory injection that installed itself with a systemd service, starts at launch and verify its execution. This file is set executable with &ldquo;chmod 777&rdquo; and starts automatically with &ldquo;systemctl start uplugplay.service&rdquo;.</p>
+<p>I will try during the dynamic analysis to find more information on the code in uplugplay.</p>
+<p>I saw at the beginning some occurrence of crontab, I wanted to take a look to see if it was related to the persistence we just saw.
+<img src="/images/prometei-37.png" alt="IDA_5"></p>
+<p>In this function, we see that a cron task is created &ldquo;task.cron&rdquo; set to be executed at each reboot. Then the path of a file is added &ldquo;byte_1573A80&rdquo;, probably uplugplay.</p>
+<p>The current crontab is retrieved with &ldquo;crontab -l&rdquo; and a job research is done. If &ldquo;no crontab&rdquo; it creates a new entry, else, it does not insert a second one.
+There is a writing operation in the temporary file &ldquo;task.cron&rdquo; and its installation with &ldquo;system(&ldquo;crontab task.cron&rdquo;)&rdquo;. Following this, the temporary file is deleted &ldquo;delete_file(&ldquo;task.cron&rdquo;)&rdquo;.
+<img src="/images/prometei-36.png" alt="IDA_6"></p>
+<p>To find &ldquo;crontab task.cron&rdquo;, we see that the variable concatenates crontab with &amp;v19[9] which is the start of &rsquo;task.cron&rsquo; since in v19 we already have :</p>
+<ul>
+<li>0-7 : @reboot</li>
+<li>8 : &lsquo;\0&rsquo;</li>
+<li>9 : task.cron</li>
+</ul>
+<p>We see that it&rsquo;s pretty clean, it prevents itself from having multiple cron tasks and deletes the temporary file.</p>
+<p>Mining functions :
+Since we are dealing with a crypto miner, there are obviously functions related to this activity. By following the strings &ldquo;start_mining&rdquo; and &ldquo;stop_mining&rdquo;, I jumped on the function using them. The first one is analysing multiple commands as strings and perform actions depending on what they contain.
+<img src="/images/prometei-38.png" alt="IDA_7"></p>
+<p>This acts as a command interpreter of C2 servers. So it first accepts the command &ldquo;start_mining&rdquo; and then</p>
+<ul>
+<li>Downloads a binary with wget</li>
+<li>Is able to copy, clear or verify files with fcopy and fdel</li>
+<li>Can execute it with exec</li>
+<li>Calculate a hash with fchk</li>
+<li>And finally encode a structured answer in qword_1573E80</li>
+</ul>
+<p>The command &ldquo;start_mining&rdquo; is controlled by a second function that we can call &ldquo;mining_controller&rdquo; that :</p>
+<ul>
+<li>Verifies if the process &ldquo;updatecheckerd&rdquo; is running with pidof</li>
+<li>Initiates buffers</li>
+<li>construct a command (v4)</li>
+<li>Kills the old process running if it exists with &ldquo;pkill updatecheckerd&rdquo;</li>
+<li>Start the process with the command (v4)</li>
+</ul>
+<p>If we take a look at the command &ldquo;stop_mining&rdquo;, its goal is to kill the process &ldquo;updatecheckerd&rdquo; with pkill.</p>
+<p>Another thing that I found is that the buffer qword_BE9D40 seems to contain interesting information, I found the variable that saves the json configuration in the buffer: qword_BEA400 and in which function the key is used : sub_409F4D. I will try to retrieve the content of qword_BE9D40 during the dynamic analysis.</p>
+<h3 id="how-the-malware-works">How the malware works</h3>
+<p>From what I understood during the reverse part, the malware works as follow :</p>
+<ol>
+<li>
+<p>Retrieving information of its host</p>
+<ul>
+<li>Get OS information by trying to execute the commands : &lsquo;/etc/os-release&rsquo;, &lsquo;/etc/redhat-release&rsquo;, &lsquo;/etc/debian-version&rsquo;</li>
+<li>Get processor information by trying to execute the commands : &lsquo;/proc/cpuinfo&rsquo;, &lsquo;/proc/meminfo&rsquo;, &lsquo;hostnamectl&rsquo;, &lsquo;uptime&rsquo; and it then writes these information in a form format : &lsquo;Product name:&rsquo;, &lsquo;Hardware model:&rsquo;, &lsquo;Virtualization:&rsquo;, &lsquo;Hardware Vendor:&rsquo;, &lsquo;MemTotal:&rsquo;, &lsquo;model name:&rsquo;</li>
+<li>Get network information with the commands : &lsquo;CommId&rsquo;, &rsquo;nslookup 8.8.8.8&rsquo;</li>
+</ul>
+</li>
+<li>
+<p>Connects to the C2 either with the .onion or .i2p URL or a dummy one</p>
+</li>
+<li>
+<p>Accepts the C2 commands (start_mining, stop_mining, exec, quit, &hellip;)</p>
+</li>
+<li>
+<p>If start_mining is received :</p>
+<ul>
+<li>wget updatecheckerd and executes it with &ldquo;system&rdquo; or &ldquo;exec&rdquo;</li>
+</ul>
+</li>
+<li>
+<p>Persistence</p>
+<ul>
+<li>With the file uplugplay in /usr/sbin/uplugplay or /etc/uplugplay</li>
+<li>Creation of a systemd service uplugplay.service</li>
+<li>Creation of a cron task containing &ldquo;@reboot /usr/sbin/uplugplay&rdquo;</li>
+</ul>
+</li>
+<li>
+<p>Hiding itself by controlling the processes with pkill and pidof</p>
+</li>
+</ol>
+<h2 id="dynamic-analysis">Dynamic Analysis</h2>
+<h3 id="context-and-setup">Context and setup</h3>
+<p>Let&rsquo;s now try to analyse the malware dynamically to see if it works as expected and if we can understand more things on its behaviour.</p>
+<p>I used Lauri Wired&rsquo;s lab which works on docker : <a href="https://github.com/LaurieWired/linux_malware_analysis_container">https://github.com/LaurieWired/linux_malware_analysis_container</a> thank you for that !</p>
+<p>The setup I have is a local ubuntu VM on which I connect through SSH and launch the script which creates a docker container where I can manipulate the malware. This allows me to execute the malware and just start a new docker container whenever I want.</p>
+<h3 id="follow-our-findings">Follow our findings</h3>
+<p>First let&rsquo;s just execute the malware without arguments :
+<img src="/images/prometei-11.png" alt="mal_execution_1"></p>
+<p>So we have couple errors, the first one tells us that the malware cannot operate because it has not been booted with systemd. Indeed it is the case because we are inside a docker container, this could be a protection against malware analysis (like anti-vm, anti-sandboxes, &hellip;)
+The second error is more specific, it says that a Host is down. It happens because the socket D-Bus that the malware tries to use does not exist in this environment.</p>
+<p>What we can do here is look at the system calls made by the malware.
+The command &lsquo;strace&rsquo; allows us to do it with several parameters : &ldquo;strace -ff -o strace.out.log ./prometei.elf&rdquo;
+We can observe some logs in the terminal, there are again systemd errors because we are not in a systemd environment (docker) but we have the creation of a symlink with the installation of the systemctl service uplugplay, which is something we identified earlier in the static analysis :
+<img src="/images/prometei-39.png" alt="strace1"></p>
+<p>We can check its configuration, and it is the same one that we observed in the static analysis :
+<img src="/images/prometei-41.png" alt="strace2"></p>
+<p>I also got multiple files created as output, the &rsquo;task.cron&rsquo; contains something we also saw before :
+<img src="/images/prometei-40.png" alt="strace3"></p>
+<p>In all the other log files, there are mostly system calls, I will not spend too much time checking them, it basically tries to access system files
+<img src="/images/prometei-13.png" alt="strace_1">
+<img src="/images/prometei-16.png" alt="strace_2"></p>
+<p>This actually allows the malware to retrieve its own execution path. (which could be used for future actions)
+We observe some memory mapping and memory protection too.
+<img src="/images/prometei-17.png" alt="strace3"></p>
+<p>Then, the malware tries to access several files in read-only, and &lsquo;/etc/hosts&rsquo; in write. We don&rsquo;t know why exactly why but it might be a check that they exist and add some lines in /etc/hosts.
+<img src="/images/prometei-14.png" alt="strace4"></p>
+<p>At the end, the malware tries to access the file &lsquo;/usr/sbin/uplugplay&rsquo;, which shows us where it was installed because with the static analysis we had a doubt between &lsquo;/usr/sbin/&rsquo; and &lsquo;/etc/&rsquo;.
+<img src="/images/prometei-15.png" alt="strace5"></p>
+<p>We can retrieve the hash of the uplugplay file, as IoC :
+<img src="/images/prometei-42.png" alt="strace6"></p>
+<p>There were too many systemd errors, so I executed it in a Virtual Machine instead in order to see more things on the processes and the network traffic.</p>
+<p>By starting service.uplugplay with systemctl, we can follow its activity. Regarding the open ports, we see that uplugplay is listening on TCP port 89 and many other UDP ports.
+<img src="/images/prometei-43.png" alt="alt text"></p>
+<p>Now I can try communicating with it locally, I have a first terminal with tcpdump running, listening on port 89, and a second terminal sending the command we saw during the static analysis (start_mining, stop_mining, etc) with ncat. My first try was with start_mining and we see that it works pretty good :
+<img src="/images/prometei-44.png" alt="alt text"></p>
+<p>It looks like the json configuration we had in the binary, but there are some differences, &ldquo;id&rdquo; is now &ldquo;i=&rdquo; the value of &ldquo;enckey&rdquo; is different, and we have a new data : &ldquo;answ&rdquo; that was not present in the static analysis.
+It is more clear on wireshark:
+<img src="/images/prometei-45.png" alt="alt text"></p>
+<p>It is possible that a wallet or a pool is in the &ldquo;answ&rdquo; field but it looks like it is encrypted. Even after modifying the &ldquo;-&rdquo; by &ldquo;+&rdquo; and the &ldquo;_&rdquo; by &ldquo;=&rdquo; to retrieve the original b64.</p>
+<p>I did not observe any of the process &ldquo;updatecheckerd&rdquo;, &ldquo;netwalker&rdquo;, &ldquo;walker&rdquo; being created on my host, it is possible that my lab blocks the execution of the malware at some point but they can still be considered as IoCs thanks to the static analysis.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>With the static and dynamic analysis performed of prometei, I was able to better understand the malware&rsquo;s behaviour and identify this list of IoCs:</p>
+<ol>
+<li>The persistence file : uplugplay</li>
+<li>The hash of uplugplay : sha1=4419a8accd996b8b6ec88a166d2263ea8ef5aa69</li>
+<li>The cron task : task.cron (with @reboot)</li>
+<li>The usage of the commands pgrep and pidof</li>
+<li>The URLs : <a href="http://dummy.zero/cgi-bin/prometei.cgi">http://dummy.zero/cgi-bin/prometei.cgi</a>, <a href="https://gb7ni5rgeexdcncj.onion/cgi-bin/prometei.cgi">https://gb7ni5rgeexdcncj.onion/cgi-bin/prometei.cgi</a>, <a href="http://mkhkjxgchtfgu7uhofxzgoawntfzrkdccymveektqgpxrpjb72oq.b32.i">http://mkhkjxgchtfgu7uhofxzgoawntfzrkdccymveektqgpxrpjb72oq.b32.i</a>2p/cgi-bin//prometei.cgi</li>
+<li>The processes : updatecheckerd, netwalker, walker, nvsync, netsync</li>
+</ol>
+<h3 id="detection-rule">Detection rule</h3>
+<p>With those IoCs, we are able to write a Yara rule that will help detect if Prometei is on your host/network.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>rule IoCs_Prometei
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    meta:
+</span></span><span style="display:flex;"><span>        description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Detects Prometei activities on your host&#34;</span>
+</span></span><span style="display:flex;"><span>        author <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;kohi&#34;</span>
+</span></span><span style="display:flex;"><span>        date <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2025-05-01&#34;</span>
+</span></span><span style="display:flex;"><span>        malware_family <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Prometei&#34;</span>
+</span></span><span style="display:flex;"><span>        version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1.0&#34;</span>
+</span></span><span style="display:flex;"><span>        hash <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;8CFE4B3888C08EAD3574701B20D70BBBBF86B79FAEB2FDE1D072E090F56D60E5&#34;</span>
+</span></span><span style="display:flex;"><span>    strings:
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>bin1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;uplugplay&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>bin2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;updatecheckerd&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>proc1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;netwalker&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>proc2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;walker&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>proc3 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;nvsync&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>proc4 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;netsync&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>cron <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;@reboot /usr/sbin/uplugplay -cron&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>cronfile <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;task.cron&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>cmd1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;pgrep&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>cmd2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;pidof&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>url1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://dummy.zero/cgi-bin//prometei.cgi&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>url2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;https://gb7ni5rgeexdcncj.onion/cgi-bin//prometei.cgi&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>url3 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://mkhkjxgchtfgu7uhofxzgoawntfzrkdccymveektqgpxrpjb72oq.b32.i2p/cgi-bin/prometei.cgi&#34;</span>
+</span></span><span style="display:flex;"><span>    condition:
+</span></span><span style="display:flex;"><span>        (
+</span></span><span style="display:flex;"><span>            any of (<span style="color:#960050;background-color:#1e0010">$</span>bin<span style="color:#f92672">*</span>) <span style="color:#f92672">and</span>
+</span></span><span style="display:flex;"><span>            any of (<span style="color:#960050;background-color:#1e0010">$</span>proc<span style="color:#f92672">*</span>) <span style="color:#f92672">and</span>
+</span></span><span style="display:flex;"><span>            any of (<span style="color:#960050;background-color:#1e0010">$</span>cmd<span style="color:#f92672">*</span>) <span style="color:#f92672">and</span>
+</span></span><span style="display:flex;"><span>            any of (<span style="color:#960050;background-color:#1e0010">$</span>url<span style="color:#f92672">*</span>) <span style="color:#f92672">and</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">$</span>cron
+</span></span><span style="display:flex;"><span>        ) <span style="color:#f92672">or</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">$</span>cronfile
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        2960 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2025-05-01 02:00
+        
+
+         
+          
+        
+      </p>
+    </div>
+      <hr />
+      <div class="sharing-buttons">
+        
+<a class="resp-sharing-button__link" href="https://facebook.com/sharer/sharer.php?u=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f" target="_blank" rel="noopener" aria-label="" title="Share on facebook">
+  <div class="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?url=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f" target="_blank" rel="noopener" aria-label="" title="Share on twitter">
+  <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
+      <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title=Prometei%20-%20Static%20and%20dynamic%20analysis&amp;caption=Prometei%20-%20Static%20and%20dynamic%20analysis&amp;canonicalUrl=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f" target="_blank" rel="noopener" aria-label="" title="Share on tumblr">
+  <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
+    <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.563 24c-5.093 0-7.031-3.756-7.031-6.411V9.747H5.116V6.648c3.63-1.313 4.512-4.596 4.71-6.469C9.84.051 9.941 0 9.999 0h3.517v6.114h4.801v3.633h-4.82v7.47c.016 1.001.375 2.371 2.207 2.371h.09c.631-.02 1.486-.205 1.936-.419l1.156 3.425c-.436.636-2.4 1.374-4.156 1.404h-.178l.011.002z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="mailto:?subject=Prometei%20-%20Static%20and%20dynamic%20analysis&amp;body=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f" target="_self" rel="noopener" aria-label="" title="Share via email">
+  <div class="resp-sharing-button resp-sharing-button--email resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://pinterest.com/pin/create/button/?url=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f&amp;media=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f;description=Prometei%20-%20Static%20and%20dynamic%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on pinterest">
+  <div class="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f&amp;title=Prometei%20-%20Static%20and%20dynamic%20analysis&amp;summary=Prometei%20-%20Static%20and%20dynamic%20analysis&amp;source=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f" target="_blank" rel="noopener" aria-label="" title="Share on linkedin">
+  <div class="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://reddit.com/submit/?url=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f&amp;resubmit=true&amp;title=Prometei%20-%20Static%20and%20dynamic%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on reddit">
+  <div class="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://www.xing.com/app/user?op=share;url=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f;title=Prometei%20-%20Static%20and%20dynamic%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on xing">
+  <div class="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.188 0c-.517 0-.741.325-.927.66 0 0-7.455 13.224-7.702 13.657.015.024 4.919 9.023 4.919 9.023.17.308.436.66.967.66h3.454c.211 0 .375-.078.463-.22.089-.151.089-.346-.009-.536l-4.879-8.916c-.004-.006-.004-.016 0-.022L22.139.756c.095-.191.097-.387.006-.535C22.056.078 21.894 0 21.686 0h-3.498zM3.648 4.74c-.211 0-.385.074-.473.216-.09.149-.078.339.02.531l2.34 4.05c.004.01.004.016 0 .021L1.86 16.051c-.099.188-.093.381 0 .529.085.142.239.234.45.234h3.461c.518 0 .766-.348.945-.667l3.734-6.609-2.378-4.155c-.172-.315-.434-.659-.962-.659H3.648v.016z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="whatsapp://send?text=Prometei%20-%20Static%20and%20dynamic%20analysis%20%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f" target="_blank" rel="noopener" aria-label="" title="Share on whatsapp">
+  <div class="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://news.ycombinator.com/submitlink?u=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f&amp;t=Prometei%20-%20Static%20and%20dynamic%20analysis" target="_blank" rel="noopener" aria-label="" title="Share on hacker news">
+  <div class="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></svg>
+    </div>
+  </div>
+</a>
+
+
+<a class="resp-sharing-button__link" href="https://telegram.me/share/url?text=Prometei%20-%20Static%20and%20dynamic%20analysis&amp;url=%2f%2flocalhost%3a1313%2fposts%2ftechnical-reports%2fprometei_crypto%2f" target="_blank" rel="noopener" aria-label="" title="Share on telegram">
+  <div class="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </div>
+  </div>
+</a>
+
+      </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="//localhost:1313/posts/technical-reports/tailos/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">TailsOS - retrieving files from Persistent Storage</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="//localhost:1313/posts/technical-reports/thanos_ransomware/">
+                    <span class="button__text">Thanos ransomware analysis</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span>&copy; 2026</span>
+            
+            
+            <span><a href="//localhost:1313/posts/index.xml" target="_blank" title="rss"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></a></span>
+            
+        </div>
+    </div>
+    
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.85fad2de4f13fec3bcb3b3cb10430cdb44a7b4a9749b32938241a5c6e77718df7624f1002b880521fdc26e24ec1077fda214bf1cb36ee3045510760d09638cae.js" integrity="sha512-hfrS3k8T/sO8s7PLEEMM20SntKl0mzKTgkGlxud3GN92JPEAK4gFIf3CbiTsEHf9ohS/HLNu4wRVEHYNCWOMrg=="></script>
+
+
+
+
+    </body>
+</html>

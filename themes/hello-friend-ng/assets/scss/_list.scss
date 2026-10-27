@@ -45,6 +45,10 @@
     margin: 0;
     padding: 0;
     list-style: none;
+
+    &--nested {
+      margin-left: 1.8em;
+    }
   }
 
   .post {
@@ -80,6 +84,10 @@
       flex-shrink: 0;
       margin-left: 1em;
       @include dimmed;
+    }
+
+    &-category .post-title {
+      font-weight: 600;
     }
   }
 }

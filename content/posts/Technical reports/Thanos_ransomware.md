@@ -2,6 +2,8 @@
 author:
   name: "kohi"
 date: 2024-04-08
+aliases:
+- /posts/thanos_ransomware/
 linktitle: Thanos ransomware analysis
 type:
 - post

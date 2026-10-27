@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Spirits on Blog | kohi</title>
+    <link>//localhost:1313/series/spirits/</link>
+    <description>Recent content in Spirits on Blog | kohi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/series/spirits/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>French spirits</title>
+      <link>//localhost:1313/posts/spirits-opinion/french/</link>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/spirits-opinion/french/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Irish whiskeys</title>
+      <link>//localhost:1313/posts/spirits-opinion/irish/</link>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/spirits-opinion/irish/</guid>
+      <description>Teeling Waterford </description>
+    </item>
+    <item>
+      <title>Rhums.elf</title>
+      <link>//localhost:1313/posts/spirits-opinion/rhums/</link>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/spirits-opinion/rhums/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Scotland.exe whiskies</title>
+      <link>//localhost:1313/posts/spirits-opinion/scotland/</link>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/spirits-opinion/scotland/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>US whiskeys</title>
+      <link>//localhost:1313/posts/spirits-opinion/us/</link>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/spirits-opinion/us/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>
