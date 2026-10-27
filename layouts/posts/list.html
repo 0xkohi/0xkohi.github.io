@@ -1,0 +1,22 @@
+{{ define "main" }}
+    <main class="posts">
+        <h1>{{ .Title }}</h1>
+
+        {{ with .Content }}
+            <div class="content">{{ . }}</div>
+        {{ end }}
+
+        <div class="posts-group">
+            <ul class="posts-list">
+                {{ range .Sections.ByWeight }}
+                    <li class="post-item">
+                        <a href="{{ .RelPermalink }}" class="post-item-inner">
+                            <span class="post-title">{{ .Title }}</span>
+                            <span class="post-day">{{ len .RegularPages }} article{{ if ne (len .RegularPages) 1 }}s{{ end }}</span>
+                        </a>
+                    </li>
+                {{ end }}
+            </ul>
+        </div>
+    </main>
+{{ end }}

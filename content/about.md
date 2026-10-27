@@ -8,6 +8,6 @@ aliases = ["about-us","about-hugo","contact"]
 
 I am a cybersecurity student interested in Malware analysis, CTI and Forensics.
 
-Ce blog est organisé en deux sections depuis l’accueil : **Cyber & Malware** (analyses, CTI, forensics, CTF, outils) et **Whisky & Spiritueux** (carnet de dégustation personnel). 
+Les articles sont regroupés sous **Posts** : **Technical reports** (malware, CTI, forensics, outils) et **Spirits opinion** (carnet de dégustation). 
 
 On my github you will find some helpful tools for forensic disk&memory analysis.
