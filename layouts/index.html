@@ -1,0 +1,40 @@
+{{ define "body" }}
+    <body class="{{ if .Site.Params.backgroundImage }} background-image" style="background-image: url('{{ .Site.Params.backgroundImage }}');" {{ else }}"{{ end }}>
+{{ end }}
+
+{{ define "main" }}
+    <main class="home-portal" aria-role="main">
+        <div class="home-portal__intro">
+            {{ if .Site.Params.Portrait.Path }}
+                <img src="{{ .Site.Params.Portrait.Path }}" class="circle" alt="{{ .Site.Params.Portrait.Alt }}" style="max-width:{{ .Site.Params.Portrait.MaxWidth }}" />
+            {{ end }}
+
+            <h1>{{ .Site.Title }}</h1>
+
+            {{ with .Content }}
+                <p class="home-portal__tagline">{{ . | plainify }}</p>
+            {{ else }}
+                {{ with .Site.Params.homeTagline }}
+                    <p class="home-portal__tagline">{{ . }}</p>
+                {{ end }}
+            {{ end }}
+
+            {{- with .Site.Params.social }}
+                <div class="home-portal__social">
+                    {{ partial "social-icons.html" . }}
+                </div>
+            {{- end }}
+        </div>
+
+        <div class="portal-grid">
+            {{ range .Site.Params.portals }}
+                <a href="{{ .url | relURL }}" class="portal-card portal-card--{{ .id }}">
+                    <span class="portal-card__icon" aria-hidden="true">{{ .emoji }}</span>
+                    <span class="portal-card__title">{{ .title }}</span>
+                    <span class="portal-card__desc">{{ .blurb }}</span>
+                    <span class="portal-card__cta">{{ .cta }}</span>
+                </a>
+            {{ end }}
+        </div>
+    </main>
+{{ end }}

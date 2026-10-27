@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/Discord_bot/
 author:
   name: "kohi"
 date: 2024-08-09

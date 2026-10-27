@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/prometei_crypto/
 author:
   name: "kohi"
 date: 2025-05-01

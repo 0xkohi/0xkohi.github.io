@@ -10,8 +10,27 @@ paginate     = 10
   dateformNum     = "2006-01-02"
   dateformNumTime = "2006-01-02 15:04"
 
-  # Subtitle for home
-  homeSubtitle = "Socials"
+  # Subtitle for home (meta / title)
+  homeSubtitle = "Cyber & Spiritueux"
+  homeTagline = "Malware, forensics et carnet de dégustation — deux passions, un blog."
+
+  customCSS = ["css/portal.css"]
+
+  [[params.portals]]
+    id = "cyber"
+    emoji = "🛡️"
+    title = "Cyber & Malware"
+    blurb = "Analyses, CTI, forensics, outils et write-ups."
+    url = "/cyber/posts/"
+    cta = "Voir les articles →"
+
+  [[params.portals]]
+    id = "spiritueux"
+    emoji = "🥃"
+    title = "Whisky & Spiritueux"
+    blurb = "Notes sur les bouteilles goûtées — whisky, rhum, gin…"
+    url = "/spiritueux/posts/"
+    cta = "Voir les dégustations →"
 
   # Set disableReadOtherPosts to true in order to hide the links to other posts.
   disableReadOtherPosts = false
@@ -57,6 +76,16 @@ paginate     = 10
     url        = "about/"
 
   [[menu.main]]
-    identifier = "blog"
-    name       = "Posts"
-    url        = "posts/"
+    identifier = "home"
+    name       = "Accueil"
+    url        = "/"
+
+  [[menu.main]]
+    identifier = "cyber"
+    name       = "Cyber"
+    url        = "cyber/posts/"
+
+  [[menu.main]]
+    identifier = "spiritueux"
+    name       = "Spiritueux"
+    url        = "spiritueux/posts/"

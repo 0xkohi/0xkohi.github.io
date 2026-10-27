@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/Thanos_ransomware/
 author:
   name: "kohi"
 date: 2024-04-08

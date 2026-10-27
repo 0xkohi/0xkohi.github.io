@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/TailOS/
 author:
   name: "kohi"
 date: 2024-09-02
